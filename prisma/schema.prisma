@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
 }
 
@@ -11,8 +11,32 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
+model Movie {
+    id          Int        @id
+    title       String
+    description String
+    showtimes   Showtime[]
+}
+
+model Showtime {
+    time           DateTime
+    matinee        Boolean
+    availableSeats Int
+
+    movieId Int
+    movie   Movie     @relation(fields: [movieId], references: [id])
+    tickets Tickets[]
+
+    @@id([time, movieId])
+}
+
+model Tickets {
+    name      String
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+
+    showtimeTime    DateTime
+    showtimeMovieId Int
+    showtime        Showtime @relation(fields: [showtimeTime, showtimeMovieId], references: [time, movieId])
+
+    @@id([name, createdAt])
 }
