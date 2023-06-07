@@ -11,8 +11,8 @@ export const appRouter = createTRPCRouter({
   movies: movieRouter,
 });
 
+// tRPC server side (she's serving...)
 const prisma = new PrismaClient();
-
 export const caller = appRouter.createCaller({ prisma });
 
 // export type definition of API
