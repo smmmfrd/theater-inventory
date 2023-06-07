@@ -11,7 +11,7 @@ export default function MovieCard() {
       </header>
       <section>
         <h4 className="text-base-100">Matinee Showtimes</h4>
-        <ShowtimeCard time={new Date()} />
+        <ShowtimeCard time={"10:30 PM"} />
       </section>
       <section>
         <h4 className="text-base-100">Regular Showtimes</h4>
