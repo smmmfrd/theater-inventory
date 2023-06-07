@@ -2,51 +2,51 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+    provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 model Theater {
-    id        Int        @id
+    theaterId Int        @id
     showtimes Showtime[]
 }
 
 model Movie {
-    id          Int        @id
+    movieId     Int        @id
     title       String
     description String
     image       String
-    showtimes   Showtime[]
+    Showtime    Showtime[]
 }
 
 model Showtime {
+    showtimeId     Int      @id @default(autoincrement())
     time           DateTime
-    matinee        Boolean
+    maxSeats       Int
     availableSeats Int
-
-    movieId Int
-    movie   Movie @relation(fields: [movieId], references: [id])
-
-    theaterId Int
-    theater   Theater @relation(fields: [theaterId], references: [id])
 
     tickets Tickets[]
 
-    @@id([time, movieId])
+    theaterId Int
+    theater   Theater @relation(fields: [theaterId], references: [theaterId])
+
+    movieId Int
+    movie   Movie @relation(fields: [movieId], references: [movieId])
+
+    @@index([theaterId])
+    @@index([movieId])
 }
 
 model Tickets {
-    name      String
-    createdAt DateTime @default(now())
+    ticketId String @id @default(uuid())
 
-    showtimeTime    DateTime
-    showtimeMovieId Int
-    showtime        Showtime @relation(fields: [showtimeTime, showtimeMovieId], references: [time, movieId])
+    showtimeId Int
+    showtime   Showtime @relation(fields: [showtimeId], references: [showtimeId])
 
-    @@id([name, createdAt])
+    @@index([showtimeId])
 }
