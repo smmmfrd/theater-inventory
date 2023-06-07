@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { api } from "~/utils/api";
 import MovieCard from "~/components/MovieCard";
+import { caller } from "~/server/api/root";
 
 type Data = {
   name: string;
@@ -27,7 +28,8 @@ export const getServerSideProps: GetServerSideProps<{
       };
     });
 
-  console.log(movies);
+  // console.log(movies);
+  const trpcRes = await caller.movies.setMovies(movies);
 
   const data = { name: "" };
   return {
@@ -36,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<{
 };
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
   return (
     <>

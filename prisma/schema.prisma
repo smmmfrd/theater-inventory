@@ -11,6 +11,11 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Theater {
+    id        Int        @id
+    showtimes Showtime[]
+}
+
 model Movie {
     id          Int        @id
     title       String
@@ -25,7 +30,11 @@ model Showtime {
     availableSeats Int
 
     movieId Int
-    movie   Movie     @relation(fields: [movieId], references: [id])
+    movie   Movie @relation(fields: [movieId], references: [id])
+
+    theaterId Int
+    theater   Theater @relation(fields: [theaterId], references: [id])
+
     tickets Tickets[]
 
     @@id([time, movieId])
