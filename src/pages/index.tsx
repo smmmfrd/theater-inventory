@@ -8,6 +8,8 @@ import MovieCard from "~/components/MovieCard";
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const movies = api.movies.getMovies.useQuery();
+  console.log(movies);
 
   return (
     <>
@@ -27,6 +29,7 @@ const Home: NextPage = () => {
             Now Playing at Fake Theater on [today's date]
           </h2>
         </header>
+        <p>{JSON.stringify(movies.data?.movies)}</p>
 
         <MovieCard />
 

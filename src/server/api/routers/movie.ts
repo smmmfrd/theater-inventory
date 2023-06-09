@@ -9,10 +9,8 @@ export const movieRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
-  setMovies: publicProcedure
-    .input(z.object({ id: z.number(), title: z.string() }).array())
-    .mutation(({ input, ctx }) => {
-      console.log("TRPC: ", input);
-      ctx.prisma.movie.deleteMany;
-    }),
+  getMovies: publicProcedure.query(async ({ ctx }) => {
+    const movies = await ctx.prisma.movie.findMany({});
+    return { movies };
+  }),
 });
