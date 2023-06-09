@@ -18,9 +18,9 @@ model Theater {
 
 model Movie {
     movieId     Int        @id
-    title       String
-    description String
-    image       String
+    title       String     @db.Text
+    description String     @db.Text
+    image       String     @db.Text
     Showtime    Showtime[]
 }
 
@@ -33,10 +33,10 @@ model Showtime {
     tickets Tickets[]
 
     theaterId Int
-    theater   Theater @relation(fields: [theaterId], references: [theaterId])
+    theater   Theater @relation(fields: [theaterId], references: [theaterId], onDelete: Cascade)
 
     movieId Int
-    movie   Movie @relation(fields: [movieId], references: [movieId])
+    movie   Movie @relation(fields: [movieId], references: [movieId], onDelete: Cascade)
 
     @@index([theaterId])
     @@index([movieId])
@@ -46,7 +46,7 @@ model Tickets {
     ticketId String @id @default(uuid())
 
     showtimeId Int
-    showtime   Showtime @relation(fields: [showtimeId], references: [showtimeId])
+    showtime   Showtime @relation(fields: [showtimeId], references: [showtimeId], onDelete: Cascade)
 
     @@index([showtimeId])
 }

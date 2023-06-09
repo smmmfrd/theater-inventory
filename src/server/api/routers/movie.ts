@@ -13,5 +13,6 @@ export const movieRouter = createTRPCRouter({
     .input(z.object({ id: z.number(), title: z.string() }).array())
     .mutation(({ input, ctx }) => {
       console.log("TRPC: ", input);
+      ctx.prisma.movie.deleteMany;
     }),
 });
