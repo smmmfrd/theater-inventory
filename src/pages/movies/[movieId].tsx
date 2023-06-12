@@ -25,7 +25,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps<MoviePageType> = async (
+export const getStaticProps: GetStaticProps<MoviePageProps> = async (
   context
 ) => {
   const { movieId } = context.params as StaticPathParams;
@@ -38,13 +38,13 @@ export const getStaticProps: GetStaticProps<MoviePageType> = async (
   };
 };
 
-type MoviePageType = {
+type MoviePageProps = {
   movie: Movie;
 };
 
 const MoviePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   movie,
-}: MoviePageType) => {
+}: MoviePageProps) => {
   return <div className="">{movie.title}</div>;
 };
 

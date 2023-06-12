@@ -4,7 +4,7 @@ import ShowtimeCard from "./ShowtimeCard";
 
 // Reminder: this is just the display card, just need the title, id, and image right now, you should adjust the query for this.
 
-type MovieCardType = {
+export type MovieCardType = {
   movieId: number;
   title: string;
   image: string;

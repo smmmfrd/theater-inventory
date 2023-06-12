@@ -1,14 +1,25 @@
-import { type NextPage } from "next";
+import { GetStaticProps, InferGetStaticPropsType, type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { api } from "~/utils/api";
 
-import MovieCard from "~/components/MovieCard";
+import MovieCard, { MovieCardType } from "~/components/MovieCard";
+import { caller } from "~/server/api/root";
 
-const Home: NextPage = () => {
-  const movies = api.movies.getMovies.useQuery();
+type HomeProps = {
+  movies: MovieCardType[];
+};
 
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const data = await caller.movies.getMovies();
+  const movies: MovieCardType[] = data.movies;
+
+  return { props: { movies } };
+};
+
+const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
+  movies,
+}: HomeProps) => {
   return (
     <>
       <Head>
@@ -28,7 +39,7 @@ const Home: NextPage = () => {
           </h2>
         </header>
 
-        {movies.data?.movies.map((movie) => (
+        {movies.map((movie) => (
           <MovieCard
             key={movie.movieId}
             title={movie.title}
