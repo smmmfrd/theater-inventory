@@ -45,6 +45,29 @@ async function getMovies() {
   return movies;
 }
 
+const getMovieIndex = (index: number, even: boolean) => {
+  // Even just determines flickering between the bottom two movies
+  if (index % 2 == 0) {
+    return 0;
+  } else {
+    if (index < 4) {
+      return 1;
+    } else if (index < 8) {
+      return 2;
+    } else if (index < 12) {
+      return 3;
+    } else if (index < 14) {
+      return even ? 4 : 5;
+    } else {
+      return even ? 6 : 7;
+    }
+  }
+};
+
+function addMinutes(time: Date, minutes: number) {
+  return new Date(time.getTime() + minutes * 60 * 1000);
+}
+
 function addHours(time: Date, hours: number) {
   return new Date(time.getTime() + hours * 60 * 60 * 1000);
 }
@@ -60,77 +83,60 @@ function makeShowtimes(startTime: Date) {
   return showtimes;
 }
 
-async function buildTheaters(movies: TopMovies) {
-  const indexToMovie = (index: number, even: boolean) => {
-    // Should not have .title in final version.
-    if (index % 2 == 0) {
-      return movies[0];
-    } else {
-      if (index < 4) {
-        return movies[1];
-      } else if (index < 8) {
-        return movies[2];
-      } else if (index < 12) {
-        return movies[3];
-      } else if (index < 14) {
-        return movies[even ? 4 : 5];
-      } else {
-        return movies[even ? 6 : 7];
-      }
-    }
-  };
+function MakeTheaters(startTime: Date) {
+  const theaters = Array(16)
+    .fill(0)
+    .map((_, index) => {
+      const theaterStart = addMinutes(startTime, 15 * index);
+      const showtimes = makeShowtimes(theaterStart);
 
-  const newTheater = (_: any, index: number) => {
-    const startTime = 10.5 + Math.floor(index / 2) * 0.25;
-    const showtimes = [];
+      return {
+        theaterId: index,
+        showtimes,
+      };
+    });
 
-    let even = false;
-    for (let time = startTime; time < 24; time += 3) {
-      even = !even;
-      // Uncomment this
-      showtimes.push({
-        time,
-        movie: indexToMovie(index, even),
-      });
-      showtimes.push(indexToMovie(index, even));
-    }
-
-    return {
-      number: index,
-      showtimes,
-    };
-  };
-
-  const theaters = [...Array(16).fill(0).map(newTheater)];
   return theaters;
 }
 
 async function reset() {
+  // Clear out all old data
+  await prisma.movie.deleteMany();
+  await prisma.theater.deleteMany();
+
+  // Create the start date
   const currentDate = new Date();
   currentDate.setHours(10, 30, 0, 0);
   const showDate = new Date(
     currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
   );
-  console.log("Show Date:", showDate.toLocaleString());
 
-  console.log(makeShowtimes(showDate).map((show) => show.toLocaleString()));
+  // Create the starting data
+  const movieData = await getMovies();
+  const theaterData = MakeTheaters(showDate);
 
-  // const movies = await getMovies();
-  // // console.log(movies[0]);
-  // const theater: Theater = {
-  //   theaterId: 0,
-  // };
-  // const showtimes: Showtime = {
-  //   time:
-  // }
+  // Push the basic data to prisma
+  await prisma.movie.createMany({ data: [...movieData] });
+  await prisma.theater.createMany({
+    data: theaterData.map((theater) => ({
+      theaterId: theater.theaterId,
+    })),
+  });
+  await prisma.showtime.createMany({
+    data: theaterData
+      .map(({ showtimes, theaterId }) => {
+        return showtimes.map((showtime, index) => ({
+          time: showtime,
+          maxSeats: 64,
+          availableSeats: 64,
+          theaterId,
+          movieId: movieData[getMovieIndex(theaterId, index % 2 == 0)].movieId,
+        }));
+      })
+      .flat(),
+  });
 
-  // await prisma.movie.deleteMany();
-  // const create = await prisma.movie.create({
-  //   data: {
-  //     ...movies[0],
-  //   },
-  // });
-  // console.log(create);
+  console.log("Theater Reset.");
 }
 
 reset();
