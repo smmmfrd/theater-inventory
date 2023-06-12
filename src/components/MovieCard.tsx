@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import ShowtimeCard from "./ShowtimeCard";
 
 // Reminder: this is just the display card, just need the title, id, and image right now, you should adjust the query for this.
@@ -30,7 +31,9 @@ export default function MovieCard({ movieId, title, image }: MovieCardType) {
         <h4 className="text-base-100">Regular Showtimes</h4>
       </section>
       <footer className="text-base-100">
-        <p>More Info</p>
+        <Link className="link" href={`movies/${movieId}`}>
+          More Info
+        </Link>
       </footer>
     </section>
   );
