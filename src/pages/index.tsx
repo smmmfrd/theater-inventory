@@ -7,9 +7,7 @@ import { api } from "~/utils/api";
 import MovieCard from "~/components/MovieCard";
 
 const Home: NextPage = () => {
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const movies = api.movies.getMovies.useQuery();
-  console.log(movies);
 
   return (
     <>
@@ -24,14 +22,20 @@ const Home: NextPage = () => {
 
       <main className="flex min-h-screen flex-col">
         <header className="">
-          [Carousel]
+          {/* [Carousel] */}
           <h2 className="mx-8 mb-8 text-3xl">
             Now Playing at Fake Theater on [today's date]
           </h2>
         </header>
-        <p>{JSON.stringify(movies.data?.movies)}</p>
 
-        <MovieCard />
+        {movies.data?.movies.map((movie) => (
+          <MovieCard
+            key={movie.movieId}
+            title={movie.title}
+            image={movie.image}
+            movieId={movie.movieId}
+          />
+        ))}
 
         <footer className="">copy right joe brandon</footer>
       </main>

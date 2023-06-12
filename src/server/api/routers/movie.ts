@@ -11,6 +11,12 @@ export const movieRouter = createTRPCRouter({
     }),
   getMovies: publicProcedure.query(async ({ ctx }) => {
     const movies = await ctx.prisma.movie.findMany({});
-    return { movies };
+    return {
+      movies: movies.map((movie) => ({
+        movieId: movie.movieId,
+        title: movie.title,
+        image: movie.image,
+      })),
+    };
   }),
 });

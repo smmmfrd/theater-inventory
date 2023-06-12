@@ -1,13 +1,26 @@
+import Image from "next/image";
 import ShowtimeCard from "./ShowtimeCard";
 
-export default function MovieCard() {
+// Reminder: this is just the display card, just need the title, id, and image right now, you should adjust the query for this.
+
+type MovieCardType = {
+  movieId: number;
+  title: string;
+  image: string;
+};
+
+export default function MovieCard({ movieId, title, image }: MovieCardType) {
   return (
     <section className="mx-8 flex flex-col gap-4 rounded-lg bg-neutral p-8">
       <header className="text-base-100">
-        <div className="mx-auto h-72 w-52 bg-base-100 text-neutral">
-          movie img
-        </div>
-        <h3 className="text-4xl font-bold">[movie title]</h3>
+        <Image
+          className="mx-auto mb-2"
+          src={image}
+          width={208}
+          height={288}
+          alt={`Poster for ${title}`}
+        />
+        <h3 className="text-4xl font-bold">{title}</h3>
       </header>
       <section>
         <h4 className="text-base-100">Matinee Showtimes</h4>
