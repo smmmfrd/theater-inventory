@@ -27,13 +27,9 @@ export default function MovieCard({
         />
         <h3 className="text-4xl font-bold">{title}</h3>
       </header>
-      <section>
-        <h4 className="text-base-100">Matinee Showtimes</h4>
-        <ShowtimeCard time={"10:30 PM"} />
-      </section>
-      <section>
-        <h4 className="text-base-100">Regular Showtimes</h4>
-      </section>
+
+      <ShowtimeCard />
+
       <footer className="text-base-100">
         <Link className="link" href={`movies/${movieId}`}>
           More Info

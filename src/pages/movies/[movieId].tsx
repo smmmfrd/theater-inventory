@@ -5,7 +5,11 @@ import {
   InferGetStaticPropsType,
   NextPage,
 } from "next";
+import Head from "next/head";
+import Image from "next/image";
 import { ParsedUrlQuery } from "querystring";
+import React from "react";
+import ShowtimeCard from "~/components/ShowtimeCard";
 import { caller } from "~/server/api/root";
 
 // We need to convert our response to and from a string
@@ -45,7 +49,40 @@ type MoviePageProps = {
 const MoviePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   movie,
 }: MoviePageProps) => {
-  return <div className="">{movie.title}</div>;
+  return (
+    <>
+      <Head>
+        <title>{movie.title} | Fake Theater</title>
+      </Head>
+      <header className="relative">
+        <div
+          style={
+            {
+              "--image-url": `url(${movie.backdropImage})`,
+            } as React.CSSProperties
+          }
+          className="h-72 w-full max-w-7xl bg-gray-500 bg-[image:var(--image-url)] bg-cover bg-center bg-no-repeat bg-blend-multiply"
+        ></div>
+        <figure className="">
+          <Image
+            className="absolute left-8 top-8 h-[288px] rounded"
+            src={movie.posterImage}
+            width={208}
+            height={288}
+            alt={`Poster for ${movie.title}`}
+          />
+          <figcaption className="mt-20 px-8">
+            <h2 className="text-3xl font-bold">
+              {movie.title} at Fake Theater
+            </h2>
+            <p>{movie.description}</p>
+          </figcaption>
+        </figure>
+      </header>
+
+      <ShowtimeCard styleExtensions="mx-8 p-2 font-bold text-4xl rounded-lg" />
+    </>
+  );
 };
 
 export default MoviePage;

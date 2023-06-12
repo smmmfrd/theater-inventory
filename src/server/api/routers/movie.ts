@@ -14,7 +14,7 @@ export const movieRouter = createTRPCRouter({
       select: {
         movieId: true,
         title: true,
-        image: true,
+        posterImage: true,
       },
     });
 

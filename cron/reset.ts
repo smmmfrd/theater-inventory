@@ -19,7 +19,7 @@ async function getMovies() {
         title: movie.title,
         description: movie.overview,
         posterImage: `https://image.tmdb.org/t/p/w780${movie.poster_path}`,
-        backdropImage: `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`,
+        backdropImage: `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`,
       };
     });
 
