@@ -17,11 +17,12 @@ model Theater {
 }
 
 model Movie {
-    movieId     Int        @id
-    title       String     @db.Text
-    description String     @db.Text
-    image       String     @db.Text
-    Showtime    Showtime[]
+    movieId       Int        @id
+    title         String     @db.Text
+    description   String     @db.Text
+    posterImage   String     @db.Text
+    backdropImage String     @db.Text
+    Showtime      Showtime[]
 }
 
 model Showtime {

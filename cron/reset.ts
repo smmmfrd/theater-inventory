@@ -1,14 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Movie } from "@prisma/client";
 require("dotenv").config();
 
 const prisma = new PrismaClient();
-
-type Movie = {
-  movieId: number;
-  title: string;
-  description: string;
-  image: string;
-};
 
 type TopMovies = [Movie, Movie, Movie, Movie, Movie, Movie, Movie, Movie];
 
@@ -25,7 +18,8 @@ async function getMovies() {
         movieId: movie.id,
         title: movie.title,
         description: movie.overview,
-        image: `https://image.tmdb.org/t/p/w780${movie.poster_path}`,
+        posterImage: `https://image.tmdb.org/t/p/w780${movie.poster_path}`,
+        backdropImage: `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`,
       };
     });
 
@@ -79,8 +73,9 @@ async function buildTheaters(movies: TopMovies) {
 
 async function reset() {
   const movies = await getMovies();
-  console.log(movies[0]);
+  // console.log(movies[0]);
 
+  await prisma.movie.deleteMany();
   const create = await prisma.movie.create({
     data: {
       ...movies[0],

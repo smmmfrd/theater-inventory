@@ -7,16 +7,20 @@ import ShowtimeCard from "./ShowtimeCard";
 export type MovieCardType = {
   movieId: number;
   title: string;
-  image: string;
+  posterImage: string;
 };
 
-export default function MovieCard({ movieId, title, image }: MovieCardType) {
+export default function MovieCard({
+  movieId,
+  title,
+  posterImage,
+}: MovieCardType) {
   return (
     <section className="mx-8 flex flex-col gap-4 rounded-lg bg-neutral p-8">
       <header className="text-base-100">
         <Image
           className="mx-auto mb-2"
-          src={image}
+          src={posterImage}
           width={208}
           height={288}
           alt={`Poster for ${title}`}
