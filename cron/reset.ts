@@ -45,6 +45,21 @@ async function getMovies() {
   return movies;
 }
 
+function addHours(time: Date, hours: number) {
+  return new Date(time.getTime() + hours * 60 * 60 * 1000);
+}
+
+function makeShowtimes(startTime: Date) {
+  const showtimes = [startTime];
+  let newTime = addHours(startTime, 3);
+  while (newTime.getDate() === startTime.getDate()) {
+    showtimes.push(newTime);
+    newTime = addHours(newTime, 3);
+  }
+
+  return showtimes;
+}
+
 async function buildTheaters(movies: TopMovies) {
   const indexToMovie = (index: number, even: boolean) => {
     // Should not have .title in final version.
@@ -97,6 +112,8 @@ async function reset() {
     currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
   );
   console.log("Show Date:", showDate.toLocaleString());
+
+  console.log(makeShowtimes(showDate).map((show) => show.toLocaleString()));
 
   // const movies = await getMovies();
   // // console.log(movies[0]);
