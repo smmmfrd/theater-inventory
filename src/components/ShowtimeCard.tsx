@@ -17,7 +17,7 @@ type ShowtimeProps = {
 
 function Showtime({ time }: ShowtimeProps) {
   return (
-    <button className="text-md btn-accent h-10 w-20 rounded text-base font-bold text-base-100">
+    <button className="text-md btn-accent h-10 w-24 rounded text-base font-bold text-base-100">
       {dateFormatter.format(time)}
     </button>
   );
@@ -39,9 +39,12 @@ export default function ShowtimeCard({
   return (
     <section className={`bg-neutral ${styleExtensions}`}>
       <h4 className="text-base-100">Showtimes</h4>
-      {showtimes.data?.showtimes.map((showtime) => (
-        <Showtime time={showtime.time} key={showtime.showtimeId} />
-      ))}
+      {/* TODO: Should do - https://stackoverflow.com/questions/71035013/how-to-create-a-tailwindcss-grid-with-a-dynamic-amount-of-grid-columns */}
+      <div className="grid grid-cols-3 justify-items-center gap-y-2 lg:grid-cols-6">
+        {showtimes.data?.showtimes.map((showtime) => (
+          <Showtime time={showtime.time} key={showtime.showtimeId} />
+        ))}
+      </div>
     </section>
   );
 }
