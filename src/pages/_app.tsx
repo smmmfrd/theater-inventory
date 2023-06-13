@@ -18,7 +18,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           <h1>Fake Theater</h1>
         </Link>
       </nav>
-      <main className="flex min-h-screen flex-col">
+      <main className="flex min-h-screen flex-col gap-5">
         <Component {...pageProps} />
         <footer className="">copy right joe brandon</footer>
       </main>
