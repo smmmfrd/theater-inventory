@@ -20,6 +20,7 @@ model Movie {
     movieId       Int        @id
     title         String     @db.Text
     description   String     @db.Text
+    ranking       Int
     posterImage   String     @db.Text
     backdropImage String     @db.Text
     Showtime      Showtime[]

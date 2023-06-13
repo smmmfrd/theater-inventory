@@ -32,13 +32,14 @@ async function getMovies() {
   const json = await res.json();
   const movies: TopMovies = json.results
     .filter((_: any, i: number) => i < 8)
-    .map((movie: any) => {
+    .map((movie: any, index: number): Movie => {
       return {
         movieId: movie.id,
         title: movie.title,
         description: movie.overview,
         posterImage: `https://image.tmdb.org/t/p/w780${movie.poster_path}`,
         backdropImage: `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`,
+        ranking: index,
       };
     });
 

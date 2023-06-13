@@ -9,6 +9,9 @@ export const movieRouter = createTRPCRouter({
         title: true,
         posterImage: true,
       },
+      orderBy: {
+        ranking: "asc",
+      },
     });
 
     return {
