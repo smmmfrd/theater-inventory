@@ -3,7 +3,8 @@ import { api } from "~/utils/api";
 import Head from "next/head";
 
 import "~/styles/globals.css";
-import Link from "next/link";
+import Navbar from "~/components/Navbar";
+import Footer from "~/components/Footer";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -13,14 +14,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <meta name="description" content="Fake Movie Theater Ticket App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <nav className="">
-        <Link href="/">
-          <h1>Fake Theater</h1>
-        </Link>
-      </nav>
-      <main className="flex min-h-screen flex-col gap-5">
+      <main className="relative flex min-h-screen flex-col gap-5">
+        <Navbar />
         <Component {...pageProps} />
-        <footer className="">copy right joe brandon</footer>
+        {/* Footer is kept here so it's always at the bottom of the screen. */}
+        <Footer />
       </main>
     </>
   );
