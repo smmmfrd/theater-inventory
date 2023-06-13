@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { movieRouter } from "~/server/api/routers/movie";
 import { createTRPCRouter } from "~/server/api/trpc";
+import { showtimeRouter } from "./routers/showtime";
 
 /**
  * This is the primary router for your server.
@@ -9,6 +10,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   movies: movieRouter,
+  showtimes: showtimeRouter,
 });
 
 // tRPC server side (she's serving...)

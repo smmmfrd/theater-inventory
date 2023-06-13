@@ -80,7 +80,10 @@ const MoviePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         </figure>
       </header>
 
-      <ShowtimeCard styleExtensions="mx-8 p-2 font-bold text-4xl rounded-lg" />
+      <ShowtimeCard
+        styleExtensions="mx-8 p-2 font-bold text-4xl rounded-lg"
+        movieId={movie.movieId}
+      />
     </>
   );
 };
