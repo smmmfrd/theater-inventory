@@ -14,7 +14,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <meta name="description" content="Fake Movie Theater Ticket App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="relative flex min-h-screen flex-col gap-5">
+      <main className="relative flex min-h-screen flex-col gap-5 bg-base-200">
         <Navbar />
         <Component {...pageProps} />
         {/* Footer is kept here so it's always at the bottom of the screen. */}

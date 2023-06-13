@@ -18,4 +18,17 @@ export const showtimeRouter = createTRPCRouter({
         showtimes,
       };
     }),
+  getShowtime: publicProcedure
+    .input(z.object({ showtimeId: z.number() }))
+    .query(async ({ input: { showtimeId }, ctx }) => {
+      const showtime = await ctx.prisma.showtime.findUnique({
+        where: {
+          showtimeId,
+        },
+      });
+
+      return {
+        showtime,
+      };
+    }),
 });
