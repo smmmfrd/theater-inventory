@@ -17,7 +17,7 @@ type ShowtimeProps = {
 
 function Showtime({ time }: ShowtimeProps) {
   return (
-    <button className="btn-accent h-10 w-20 rounded font-bold text-base-100">
+    <button className="text-md btn-accent h-10 w-20 rounded text-base font-bold text-base-100">
       {dateFormatter.format(time)}
     </button>
   );
