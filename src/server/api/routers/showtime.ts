@@ -9,6 +9,9 @@ export const showtimeRouter = createTRPCRouter({
         where: {
           movieId,
         },
+        orderBy: {
+          time: "asc",
+        },
       });
 
       return {
