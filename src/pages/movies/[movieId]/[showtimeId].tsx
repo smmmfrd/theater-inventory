@@ -6,6 +6,7 @@ import {
   NextPage,
 } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import React, { useEffect, useState } from "react";
 import MovieHero from "~/components/MovieHero";
@@ -73,6 +74,8 @@ export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
 const ShowtimePage: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ safeShowtime, movie }: ShowtimePageProps) => {
+  const router = useRouter();
+
   const [time, setTime] = useState("");
   useEffect(() => {
     setTime(dateFormatter.format(new Date(safeShowtime.time)));
@@ -92,6 +95,7 @@ const ShowtimePage: NextPage<
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    router.push("/cart");
   };
 
   return (
@@ -112,13 +116,19 @@ const ShowtimePage: NextPage<
               value={formData.tickets}
               onChange={handleChange}
             />
-            <button className="btn-outline join-item btn" type="submit">
+            <button
+              className="btn-outline join-item btn text-base"
+              type="submit"
+            >
               Place Order
             </button>
           </form>
         </div>
 
-        <Link href={`/movies/${movie.movieId}`} className="link">
+        <Link
+          href={`/movies/${movie.movieId}`}
+          className="btn-primary btn mx-auto"
+        >
           See other showtimes
         </Link>
       </section>
