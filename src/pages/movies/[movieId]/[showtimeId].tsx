@@ -5,6 +5,7 @@ import {
   InferGetStaticPropsType,
   NextPage,
 } from "next";
+import Link from "next/link";
 import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 import MovieHero from "~/components/MovieHero";
@@ -83,6 +84,13 @@ const ShowtimePage: NextPage<
         movie={movie}
         altTitle={`${time} showing for ${movie.title}`}
       />
+      <section>
+        <p>Order Tickets</p>
+
+        <Link href={`/movies/${movie.movieId}`} className="link">
+          See other showtimes
+        </Link>
+      </section>
     </>
   );
 };

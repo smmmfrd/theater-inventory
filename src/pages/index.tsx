@@ -21,7 +21,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
     <>
       <header className="">
         {/* [Carousel] */}
-        <h2 className="mx-8 mb-8 text-3xl">
+        <h2 className="mx-8 mb-8 mt-6 text-3xl">
           Now Playing at Fake Theater on [today's date]
         </h2>
       </header>

@@ -16,7 +16,7 @@ export const dateFormatter = new Intl.DateTimeFormat("default", {
 function Showtime({ showtime }: { showtime: Showtime }) {
   return (
     <Link
-      href={`movies/${showtime.movieId}/${showtime.showtimeId}`}
+      href={`/movies/${showtime.movieId}/${showtime.showtimeId}`}
       className="btn-accent btn h-10 w-24 rounded p-0 text-base font-bold text-base-100"
     >
       {dateFormatter.format(showtime.time)}
