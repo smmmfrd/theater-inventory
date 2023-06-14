@@ -32,7 +32,7 @@ model Showtime {
     maxSeats       Int
     availableSeats Int
 
-    tickets Tickets[]
+    tickets TicketOrder[]
 
     theaterId Int
     theater   Theater @relation(fields: [theaterId], references: [theaterId], onDelete: Cascade)
@@ -44,8 +44,11 @@ model Showtime {
     @@index([movieId])
 }
 
-model Tickets {
-    ticketId String @id @default(uuid())
+model TicketOrder {
+    name       String
+    movieTitle String
+    number     Int
+    ticketId   String @id @default(uuid())
 
     showtimeId Int
     showtime   Showtime @relation(fields: [showtimeId], references: [showtimeId], onDelete: Cascade)

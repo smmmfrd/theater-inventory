@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import MovieHero from "~/components/MovieHero";
 import { dateFormatter } from "~/components/ShowtimeCard";
 import { caller } from "~/server/api/root";
+import { useTicketStore } from "~/store/TicketStore";
 
 interface ShowtimeStaticPathParams extends ParsedUrlQuery {
   movieId: string;
@@ -75,6 +76,7 @@ const ShowtimePage: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ safeShowtime, movie }: ShowtimePageProps) => {
   const router = useRouter();
+  const { addTicket: addTickets } = useTicketStore();
 
   const [time, setTime] = useState("");
   useEffect(() => {
@@ -96,6 +98,11 @@ const ShowtimePage: NextPage<
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     router.push("/cart");
+    addTickets({
+      number: formData.tickets,
+      showtimeId: safeShowtime.showtimeId,
+      movieTitle: movie.title,
+    });
   };
 
   return (
