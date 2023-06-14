@@ -1,37 +1,90 @@
-import { useRouter } from "next/router";
+import { Movie } from "@prisma/client";
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+  NextPage,
+} from "next";
+import { ParsedUrlQuery } from "querystring";
+import { useEffect, useState } from "react";
+import MovieHero from "~/components/MovieHero";
 import { dateFormatter } from "~/components/ShowtimeCard";
-import { api } from "~/utils/api";
+import { caller } from "~/server/api/root";
 
-export default function ShowtimePage() {
-  const router = useRouter();
+interface ShowtimeStaticPathParams extends ParsedUrlQuery {
+  movieId: string;
+  showtimeId: string;
+}
 
-  const showtimeQuery = api.showtimes.getShowtime.useQuery(
-    {
-      showtimeId: +router.query.showtimeId!,
+export const getStaticPaths: GetStaticPaths = async () => {
+  const { showtimes } = await caller.showtimes.getAllShowtimes();
+  const paths = showtimes.map((showtime) => ({
+    params: {
+      showtimeId: `${showtime.showtimeId}`,
+      movieId: `${showtime.movieId}`,
     },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-    }
-  );
-  const movieQuery = api.movies.getMovie.useQuery(
-    {
-      movieId: +router.query.movieId!,
+  }));
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+type SafeShowtime = {
+  time: string;
+  maxSeats: number;
+  availableSeats: number;
+  theaterId: number;
+  showtimeId: number;
+  movieId: number;
+};
+
+type ShowtimePageProps = {
+  safeShowtime: SafeShowtime;
+  movie: Movie;
+};
+
+export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
+  context
+) => {
+  const { showtimeId, movieId } = context.params as ShowtimeStaticPathParams;
+
+  const showtimeQuery = await caller.showtimes.getShowtime({
+    showtimeId: +showtimeId,
+  });
+  const showtime = showtimeQuery.showtime!;
+  const safeShowtime: SafeShowtime = {
+    ...showtime,
+    time: showtime.time.toString(),
+  };
+
+  const movieQuery = await caller.movies.getMovie({ movieId: +movieId });
+  const movie = movieQuery.movie!;
+
+  return {
+    props: {
+      safeShowtime,
+      movie,
     },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-    }
-  );
+  };
+};
+
+const ShowtimePage: NextPage<
+  InferGetStaticPropsType<typeof getStaticProps>
+> = ({ safeShowtime, movie }: ShowtimePageProps) => {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    setTime(dateFormatter.format(new Date(safeShowtime.time)));
+  }, []);
 
   return (
     <>
-      <h2>
-        {dateFormatter.format(showtimeQuery.data?.showtime?.time)} showing for{" "}
-        {movieQuery.data?.movie?.title}
-      </h2>
+      <MovieHero
+        movie={movie}
+        altTitle={`${time} showing for ${movie.title}`}
+      />
     </>
   );
-}
+};
+
+export default ShowtimePage;

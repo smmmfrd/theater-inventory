@@ -6,7 +6,6 @@ import {
   NextPage,
 } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import { ParsedUrlQuery } from "querystring";
 import React from "react";
 import MovieHero from "~/components/MovieHero";

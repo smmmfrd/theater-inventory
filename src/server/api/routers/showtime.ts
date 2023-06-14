@@ -31,4 +31,14 @@ export const showtimeRouter = createTRPCRouter({
         showtime,
       };
     }),
+  getAllShowtimes: publicProcedure.query(async ({ ctx }) => {
+    const showtimes = await ctx.prisma.showtime.findMany({
+      select: {
+        showtimeId: true,
+        movieId: true,
+      },
+    });
+
+    return { showtimes };
+  }),
 });
