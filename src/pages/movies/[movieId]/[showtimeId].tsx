@@ -100,8 +100,9 @@ const ShowtimePage: NextPage<
     router.push("/cart");
     addTickets({
       number: formData.tickets,
-      showtimeId: safeShowtime.showtimeId,
+      showtime: time,
       movieTitle: movie.title,
+      showtimeId: safeShowtime.showtimeId,
     });
   };
 

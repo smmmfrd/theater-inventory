@@ -2,8 +2,9 @@ import { create } from "zustand";
 
 type CartTicketOrder = {
   number: number;
-  showtimeId: number;
+  showtime: string;
   movieTitle: string;
+  showtimeId: number;
 };
 
 interface TicketState {
