@@ -7,7 +7,7 @@ import {
 } from "next";
 import Link from "next/link";
 import { ParsedUrlQuery } from "querystring";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import MovieHero from "~/components/MovieHero";
 import { dateFormatter } from "~/components/ShowtimeCard";
 import { caller } from "~/server/api/root";
@@ -78,14 +78,45 @@ const ShowtimePage: NextPage<
     setTime(dateFormatter.format(new Date(safeShowtime.time)));
   }, []);
 
+  const [formData, setFormData] = useState({
+    tickets: 1,
+  });
+
+  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const { name, value } = e.currentTarget;
+    setFormData((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       <MovieHero
         movie={movie}
         altTitle={`${time} showing for ${movie.title}`}
       />
-      <section>
-        <p>Order Tickets</p>
+      <section className="flex flex-col gap-12 px-8">
+        <div className="mx-auto">
+          <h3 className="mb-2 font-bold underline">Order Tickets</h3>
+          <form onSubmit={handleSubmit} className="join">
+            <input
+              type="number"
+              min="1"
+              className="input-bordered input join-item"
+              name="tickets"
+              value={formData.tickets}
+              onChange={handleChange}
+            />
+            <button className="btn-outline join-item btn" type="submit">
+              Place Order
+            </button>
+          </form>
+        </div>
 
         <Link href={`/movies/${movie.movieId}`} className="link">
           See other showtimes
