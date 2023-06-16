@@ -120,27 +120,36 @@ const ShowtimePage: NextPage<
         movie={movie}
         altTitle={`${time} showing for ${movie.title}`}
       />
-      <section className="flex flex-col gap-12 px-8">
-        <div className="mx-auto">
-          <h3 className="mb-2 font-bold underline">Order Tickets</h3>
-          <form onSubmit={handleSubmit} className="join">
-            <input
-              type="number"
-              min="1"
-              max={safeShowtime.availableSeats}
-              className="input-bordered input join-item"
-              name="tickets"
-              value={formData.tickets}
-              onChange={handleChange}
-            />
-            <button
-              className="btn-outline join-item btn text-base"
-              type="submit"
-            >
-              Add to Cart
-            </button>
-          </form>
-        </div>
+      <section className="flex flex-col gap-8 px-8">
+        {safeShowtime.availableSeats > 0 ? (
+          <div className="mx-auto">
+            <h3 className=" mb-2 text-center text-lg">
+              <span className="font-bold underline">Order Tickets</span> - Only{" "}
+              {safeShowtime.availableSeats} Seats Left!
+            </h3>
+            <form onSubmit={handleSubmit} className="join">
+              <input
+                type="number"
+                min="1"
+                max={safeShowtime.availableSeats}
+                className="input-bordered input join-item"
+                name="tickets"
+                value={formData.tickets}
+                onChange={handleChange}
+              />
+              <button
+                className="btn-outline join-item btn text-base"
+                type="submit"
+              >
+                Add to Cart
+              </button>
+            </form>
+          </div>
+        ) : (
+          <h3 className="text-4xl font-bold underline">
+            This Showing is Sold Out!
+          </h3>
+        )}
 
         <Link
           href={`/movies/${movie.movieId}`}
