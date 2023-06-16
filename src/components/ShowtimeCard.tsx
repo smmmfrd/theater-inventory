@@ -13,6 +13,7 @@ export const dateFormatter = new Intl.DateTimeFormat("default", {
 });
 
 const showtimeAvailabilityWidths = {
+  "0": "w-0",
   "1": "w-1/12",
   "2": "w-2/12",
   "3": "w-3/12",
@@ -30,8 +31,8 @@ const showtimeAvailabilityWidths = {
 function Showtime({ showtime }: { showtime: Showtime }) {
   const width =
     showtimeAvailabilityWidths[
-      `${Math.floor(
-        (showtime.availableSeats / showtime.maxSeats) * 12
+      `${Math.ceil(
+        12 - (showtime.availableSeats / showtime.maxSeats) * 12
       )}` as keyof typeof showtimeAvailabilityWidths
     ];
 
