@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useTicketStore } from "~/store/TicketStore";
+import { api } from "~/utils/api";
 
 export default function CartPage() {
+  const createTicketOrder = api.ticketOrders.createOrder.useMutation();
   const { cartTicketOrders } = useTicketStore();
 
   const [formData, setFormData] = useState({
@@ -47,10 +49,16 @@ export default function CartPage() {
     if (
       Object.keys(errors).every((key) => !errors[key as keyof typeof errors])
     ) {
-      alert("submitting!");
-    } else {
-      setIsSubmitted(false);
+      createTicketOrder.mutate({
+        name: formData.name,
+        orders: cartTicketOrders.map((order) => ({
+          movieTitle: order.movieTitle,
+          number: +order.number,
+          showtimeId: order.showtimeId,
+        })),
+      });
     }
+    setIsSubmitted(false);
   }, [formData, errors, isSubmitted]);
 
   return (
@@ -97,6 +105,8 @@ export default function CartPage() {
         {errors.name && (
           <p className="pl-4 text-sm text-error">Please enter a valid name.</p>
         )}
+
+        {createTicketOrder.isSuccess && <p>Order Placed!</p>}
       </section>
     </>
   );
