@@ -18,14 +18,16 @@ export default function MovieCard({
   return (
     <section className="mx-8 flex flex-col gap-4 rounded bg-neutral p-8">
       <header className="text-base-100">
-        <Image
-          className="mx-auto mb-2"
-          src={posterImage}
-          width={208}
-          height={288}
-          alt={`Poster for ${title}`}
-        />
-        <h3 className="text-3xl font-bold">{title}</h3>
+        <Link href={`movies/${movieId}`}>
+          <Image
+            className="mx-auto mb-2"
+            src={posterImage}
+            width={208}
+            height={288}
+            alt={`Poster for ${title}`}
+          />
+          <h3 className="text-3xl font-bold">{title}</h3>
+        </Link>
       </header>
 
       <ShowtimeCard movieId={movieId} />
