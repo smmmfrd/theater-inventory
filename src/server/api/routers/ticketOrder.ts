@@ -18,10 +18,25 @@ export const ticketOrderRouter = createTRPCRouter({
     )
     .mutation(async ({ input: { name, orders }, ctx }) => {
       await ctx.prisma.ticketOrder.createMany({
-        data: orders.map((order) => ({
-          ...order,
-          name,
-        })),
+        data: orders.map((order) => {
+          return {
+            ...order,
+            name,
+          };
+        }),
+      });
+
+      orders.forEach(async (order) => {
+        await ctx.prisma.showtime.update({
+          where: {
+            showtimeId: order.showtimeId,
+          },
+          data: {
+            availableSeats: {
+              decrement: order.number,
+            },
+          },
+        });
       });
     }),
 });
