@@ -1,6 +1,5 @@
 import { Showtime } from "@prisma/client";
 import Link from "next/link";
-import { useEffect } from "react";
 import { api } from "~/utils/api";
 
 type ShowtimeCardProps = {
@@ -13,13 +12,38 @@ export const dateFormatter = new Intl.DateTimeFormat("default", {
   minute: "numeric",
 });
 
+const showtimeAvailabilityWidths = {
+  "1": "w-1/12",
+  "2": "w-2/12",
+  "3": "w-3/12",
+  "4": "w-4/12",
+  "5": "w-5/12",
+  "6": "w-6/12",
+  "7": "w-7/12",
+  "8": "w-8/12",
+  "9": "w-9/12",
+  "10": "w-10/12",
+  "11": "w-11/12",
+  "12": "w-full",
+};
+
 function Showtime({ showtime }: { showtime: Showtime }) {
+  const width =
+    showtimeAvailabilityWidths[
+      `${Math.floor(
+        (showtime.availableSeats / showtime.maxSeats) * 12
+      )}` as keyof typeof showtimeAvailabilityWidths
+    ];
+
   return (
     <Link
       href={`/movies/${showtime.movieId}/${showtime.showtimeId}`}
-      className="btn-accent btn h-10 w-24 rounded p-0 text-base font-bold text-base-100"
+      className="btn-accent btn relative h-10 w-24 overflow-hidden rounded p-0 text-base font-bold text-base-100"
     >
       {dateFormatter.format(showtime.time)}
+      <span
+        className={`absolute bottom-0 left-0 h-1 bg-base-100 ${width}`}
+      ></span>
     </Link>
   );
 }
@@ -32,7 +56,6 @@ export default function ShowtimeCard({
     { movieId },
     {
       refetchOnWindowFocus: false,
-      refetchOnMount: false,
       refetchOnReconnect: false,
     }
   );
@@ -43,7 +66,7 @@ export default function ShowtimeCard({
       {/* TODO: Should do - https://stackoverflow.com/questions/71035013/how-to-create-a-tailwindcss-grid-with-a-dynamic-amount-of-grid-columns */}
       <div className="grid grid-cols-3 justify-items-center gap-y-2 lg:grid-cols-6">
         {showtimes.data?.showtimes.map((showtime) => (
-          <Showtime showtime={showtime} />
+          <Showtime showtime={showtime} key={showtime.showtimeId} />
         ))}
       </div>
     </section>
