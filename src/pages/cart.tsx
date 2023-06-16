@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
@@ -64,50 +65,63 @@ export default function CartPage() {
   return (
     <>
       <header className="px-8">
-        <h2 className="mt-8 text-4xl font-bold underline">Cart</h2>
-      </header>
-      <section className="px-8">
-        <table className="mx-auto table w-max border-separate bg-primary font-mono">
-          <thead>
-            <tr className="text-lg text-neutral-focus [&>*]:pb-0 [&>*]:font-thin">
-              <th>Tickets</th>
-              <th>Movie</th>
-              <th>Showtime</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cartTicketOrders.map((ticketOrder) => (
-              <tr className="text-2xl">
-                <th className="text-right">{ticketOrder.number}</th>
-                <th>{ticketOrder.movieTitle}</th>
-                <th>{ticketOrder.showtime}</th>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-      <section className="px-8">
-        <h3 className="mb-4 text-2xl font-bold">"Purchase" Tickets</h3>
-
-        <form onSubmit={handleSubmit} className="join">
-          <input
-            type="text"
-            name="name"
-            className="input join-item"
-            placeholder="Name here..."
-            onChange={handleChange}
-          />
-          <button type="submit" className="btn-outline join-item btn">
-            Place Order
-          </button>
-        </form>
-
-        {errors.name && (
-          <p className="pl-4 text-sm text-error">Please enter a valid name.</p>
+        <h2 className="mt-8 text-4xl font-bold underline">
+          Cart {cartTicketOrders.length === 0 && "Is Empty"}
+        </h2>
+        {cartTicketOrders.length === 0 && (
+          <Link href="/" className="btn-primary btn mx-auto mt-12">
+            Select a Movie & Showtime
+          </Link>
         )}
+      </header>
+      {cartTicketOrders.length > 0 && (
+        <>
+          <section className="px-8">
+            <table className="mx-auto table w-max border-separate bg-primary font-mono">
+              <thead>
+                <tr className="text-lg text-neutral-focus [&>*]:pb-0 [&>*]:font-thin">
+                  <th>Tickets</th>
+                  <th>Movie</th>
+                  <th>Showtime</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cartTicketOrders.map((ticketOrder) => (
+                  <tr className="text-2xl">
+                    <th className="text-right">{ticketOrder.number}</th>
+                    <th>{ticketOrder.movieTitle}</th>
+                    <th>{ticketOrder.showtime}</th>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section className="px-8">
+            <h3 className="mb-4 text-2xl font-bold">"Purchase" Tickets</h3>
 
-        {createTicketOrder.isSuccess && <p>Order Placed!</p>}
-      </section>
+            <form onSubmit={handleSubmit} className="join">
+              <input
+                type="text"
+                name="name"
+                className="input join-item"
+                placeholder="Name here..."
+                onChange={handleChange}
+              />
+              <button type="submit" className="btn-outline join-item btn">
+                Place Order
+              </button>
+            </form>
+
+            {errors.name && (
+              <p className="pl-4 text-sm text-error">
+                Please enter a valid name.
+              </p>
+            )}
+
+            {createTicketOrder.isSuccess && <p>Order Placed!</p>}
+          </section>
+        </>
+      )}
     </>
   );
 }
