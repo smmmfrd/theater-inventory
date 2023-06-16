@@ -53,7 +53,7 @@ export default function CartPage() {
         name: formData.name,
         orders: cartTicketOrders.map((order) => ({
           movieTitle: order.movieTitle,
-          number: +order.number,
+          number: order.number,
           showtimeId: order.showtimeId,
         })),
       });

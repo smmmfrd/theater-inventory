@@ -91,7 +91,7 @@ const ShowtimePage: NextPage<
     const { name, value } = e.currentTarget;
     setFormData((prevForm) => ({
       ...prevForm,
-      [name]: value,
+      [name]: parseInt(value),
     }));
   };
 
@@ -119,6 +119,7 @@ const ShowtimePage: NextPage<
             <input
               type="number"
               min="1"
+              max={safeShowtime.availableSeats}
               className="input-bordered input join-item"
               name="tickets"
               value={formData.tickets}
@@ -128,7 +129,7 @@ const ShowtimePage: NextPage<
               className="btn-outline join-item btn text-base"
               type="submit"
             >
-              Place Order
+              Add to Cart
             </button>
           </form>
         </div>
