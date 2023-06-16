@@ -89,9 +89,17 @@ const ShowtimePage: NextPage<
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     const { name, value } = e.currentTarget;
+
+    let realValue = parseInt(value);
+
+    // Prevent hard overwriting (by inputing a number > available seating)
+    if (name === "tickets" && realValue > safeShowtime.availableSeats) {
+      realValue = safeShowtime.availableSeats;
+    }
+
     setFormData((prevForm) => ({
       ...prevForm,
-      [name]: parseInt(value),
+      [name]: realValue,
     }));
   };
 
