@@ -100,7 +100,7 @@ function MakeTheaters(startTime: Date) {
   return theaters;
 }
 
-async function reset() {
+export default async function reset() {
   // Clear out all old data
   await prisma.movie.deleteMany();
   await prisma.theater.deleteMany();
@@ -137,7 +137,14 @@ async function reset() {
       .flat(),
   });
 
+  // Trigger redeploy
+  if (process.env.VERCEL_URL) {
+    fetch(`${process.env.RESET_LINK}`);
+  }
+
   console.log("Theater Reset.");
 }
 
-reset();
+if (!process.env.VERCEL_URL) {
+  reset();
+}
