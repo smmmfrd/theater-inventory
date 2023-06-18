@@ -1,5 +1,5 @@
-import { Movie } from "@prisma/client";
-import {
+import type { Movie } from "@prisma/client";
+import type {
   GetStaticPaths,
   GetStaticProps,
   InferGetStaticPropsType,
@@ -7,7 +7,7 @@ import {
 } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ParsedUrlQuery } from "querystring";
+import type { ParsedUrlQuery } from "querystring";
 import React, { useEffect, useState } from "react";
 import MovieHero from "~/components/MovieHero";
 import { dateFormatter } from "~/components/ShowtimeCard";
@@ -55,21 +55,45 @@ export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
   const showtimeQuery = await caller.showtimes.getShowtime({
     showtimeId: +showtimeId,
   });
-  const showtime = showtimeQuery.showtime!;
-  const safeShowtime: SafeShowtime = {
-    ...showtime,
-    time: showtime.time.toString(),
-  };
+  const showtime = showtimeQuery.showtime;
 
   const movieQuery = await caller.movies.getMovie({ movieId: +movieId });
-  const movie = movieQuery.movie!;
+  const movie = movieQuery.movie;
 
-  return {
-    props: {
-      safeShowtime,
-      movie,
-    },
-  };
+  if (!showtime || !movie) {
+    return {
+      props: {
+        safeShowtime: {
+          time: "",
+          maxSeats: 0,
+          availableSeats: 0,
+          theaterId: 0,
+          showtimeId: 0,
+          movieId: 0,
+        },
+        movie: {
+          movieId: 0,
+          title: "",
+          description: "",
+          ranking: 0,
+          posterImage: "",
+          backdropImage: "",
+        },
+      },
+    };
+  } else {
+    const safeShowtime: SafeShowtime = {
+      ...showtime,
+      time: showtime.time.toString(),
+    };
+
+    return {
+      props: {
+        safeShowtime,
+        movie,
+      },
+    };
+  }
 };
 
 const ShowtimePage: NextPage<
@@ -81,7 +105,7 @@ const ShowtimePage: NextPage<
   const [time, setTime] = useState("");
   useEffect(() => {
     setTime(dateFormatter.format(new Date(safeShowtime.time)));
-  }, []);
+  }, [safeShowtime.time]);
 
   const [formData, setFormData] = useState({
     tickets: 1,
@@ -105,13 +129,13 @@ const ShowtimePage: NextPage<
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push("/cart");
     addTickets({
       number: formData.tickets,
       showtime: time,
       movieTitle: movie.title,
       showtimeId: safeShowtime.showtimeId,
     });
+    void router.push("/cart");
   };
 
   return (

@@ -1,4 +1,3 @@
-import { TicketOrder } from "@prisma/client";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -26,8 +25,8 @@ export const ticketOrderRouter = createTRPCRouter({
         }),
       });
 
-      orders.forEach(async (order) => {
-        await ctx.prisma.showtime.update({
+      orders.map((order) => {
+        void ctx.prisma.showtime.update({
           where: {
             showtimeId: order.showtimeId,
           },

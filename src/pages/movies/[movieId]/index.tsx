@@ -1,12 +1,12 @@
-import { Movie } from "@prisma/client";
-import {
+import type { Movie } from "@prisma/client";
+import type {
   GetStaticPaths,
   GetStaticProps,
   InferGetStaticPropsType,
   NextPage,
 } from "next";
 import Head from "next/head";
-import { ParsedUrlQuery } from "querystring";
+import type { ParsedUrlQuery } from "querystring";
 import React from "react";
 import MovieHero from "~/components/MovieHero";
 import ShowtimeCard from "~/components/ShowtimeCard";
@@ -33,7 +33,24 @@ export const getStaticProps: GetStaticProps<MoviePageProps> = async (
 ) => {
   const { movieId } = context.params as MovieStaticPathParams;
   const data = await caller.movies.getMovie({ movieId: +movieId });
-  const movie: Movie = data.movie!;
+  const movie = data.movie;
+
+  // In case, somehow, the movieId, that is created based off a list of movies in the db, does not return a movie from the db.
+  if (!movie) {
+    return {
+      props: {
+        movie: {
+          movieId: 0,
+          title: "",
+          description: "",
+          ranking: 0,
+          posterImage: "",
+          backdropImage: "",
+        },
+      },
+    };
+  }
+
   return {
     props: {
       movie,

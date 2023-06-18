@@ -24,7 +24,7 @@ export default function CartPage() {
   });
 
   const validate = (form: typeof formData) => {
-    let formErrors = {
+    const formErrors = {
       name: false,
     };
     if (form.name.length < 2) {
@@ -60,7 +60,7 @@ export default function CartPage() {
       });
     }
     setIsSubmitted(false);
-  }, [formData, errors, isSubmitted]);
+  }, [formData, errors, isSubmitted, cartTicketOrders, createTicketOrder]);
 
   return (
     <>
@@ -87,7 +87,10 @@ export default function CartPage() {
               </thead>
               <tbody>
                 {cartTicketOrders.map((ticketOrder) => (
-                  <tr className="text-2xl">
+                  <tr
+                    className="text-2xl"
+                    key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
+                  >
                     <th className="text-right">{ticketOrder.number}</th>
                     <th>{ticketOrder.movieTitle}</th>
                     <th>{ticketOrder.showtime}</th>
@@ -97,7 +100,9 @@ export default function CartPage() {
             </table>
           </section>
           <section className="px-8">
-            <h3 className="mb-4 text-2xl font-bold">"Purchase" Tickets</h3>
+            <h3 className="mb-4 text-2xl font-bold">
+              &quot;Purchase&quot; Tickets
+            </h3>
 
             <form onSubmit={handleSubmit} className="join">
               <input

@@ -1,7 +1,7 @@
-import { GetStaticProps, InferGetStaticPropsType, type NextPage } from "next";
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import { caller } from "~/server/api/root";
 
-import MovieCard, { MovieCardType } from "~/components/MovieCard";
+import MovieCard, { type MovieCardType } from "~/components/MovieCard";
 
 type HomeProps = {
   movies: MovieCardType[];
@@ -22,7 +22,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <header className="">
         {/* [Carousel] */}
         <h2 className="mx-8 mb-8 mt-6 text-3xl">
-          Now Playing at Fake Theater on [today's date]
+          Now Playing at Fake Theater on [today&apos;s date]
         </h2>
       </header>
 
