@@ -25,8 +25,8 @@ export const ticketOrderRouter = createTRPCRouter({
         }),
       });
 
-      orders.map((order) => {
-        void ctx.prisma.showtime.update({
+      const update = orders.map(async (order) => {
+        await ctx.prisma.showtime.update({
           where: {
             showtimeId: order.showtimeId,
           },
@@ -36,6 +36,14 @@ export const ticketOrderRouter = createTRPCRouter({
             },
           },
         });
+
+        return order.number;
       });
+
+      const finishedUpdates = await Promise.all(update);
+
+      return {
+        goodTickets: finishedUpdates.reduce((total, num) => total + num, 0),
+      };
     }),
 });
