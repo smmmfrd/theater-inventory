@@ -2,7 +2,7 @@
 	"crons": [
 		{
 			"path": "/cron/reset",
-			"schedule": "0 15 * * 0"
+			"schedule": "23 23 * * 0"
 		}
 	]
 }

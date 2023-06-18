@@ -138,9 +138,7 @@ export default async function reset() {
   });
 
   // Trigger redeploy
-  if (process.env.VERCEL_URL) {
-    fetch(`${process.env.RESET_LINK}`);
-  }
+  fetch(`${process.env.RESET_LINK}`);
 
   console.log("Theater Reset.");
 }
