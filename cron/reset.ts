@@ -1,4 +1,4 @@
-import { PrismaClient, Movie, Theater, Showtime } from "@prisma/client";
+import { PrismaClient, Movie, Theater } from "@prisma/client";
 require("dotenv").config();
 
 const prisma = new PrismaClient();
