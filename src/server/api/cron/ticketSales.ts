@@ -88,7 +88,7 @@ export default async function TicketSales() {
 
   await Promise.all(orders);
 
-  console.log("Tickets Ordered");
+  console.log("Random Tickets Ordered");
 }
 
 void TicketSales();
