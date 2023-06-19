@@ -1,11 +1,11 @@
 {
 	"crons": [
 		{
-			"path": "/server/api/cron/reset",
+			"path": "/api/cron/reset",
 			"schedule": "23 23 * * 0"
 		},
 		{
-			"path": "/server/api/cron/ticket",
+			"path": "/api/cron/ticket",
 			"schedule": "0 4 * * *"
 		}
 	]
