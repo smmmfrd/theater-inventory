@@ -1,38 +1,45 @@
-import { PrismaClient, Movie, Theater } from "@prisma/client";
-require("dotenv").config();
+import { PrismaClient, type Movie } from "@prisma/client";
+import "dotenv/config";
 
 const prisma = new PrismaClient();
 
-type TopMovies = [Movie, Movie, Movie, Movie, Movie, Movie, Movie, Movie];
+type TMDBMovie = {
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: number[];
+  id: 385687;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+};
 
-type Theaters = [
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater,
-  Theater
-];
+type TMDBRes = {
+  results: TMDBMovie[];
+};
 
 async function getMovies() {
+  if (
+    process.env.MOVIE_DB_API_KEY === null ||
+    process.env.MOVIE_DB_API_KEY === undefined
+  ) {
+    return;
+  }
+
   const url = `https://api.themoviedb.org/3/movie/now_playing?api_key=${process.env.MOVIE_DB_API_KEY}&page=1`;
   const options = { method: "GET", headers: { accept: "application/json" } };
 
   const res = await fetch(url, options);
-  const json = await res.json();
-  const movies: TopMovies = json.results
-    .filter((_: any, i: number) => i < 8)
-    .map((movie: any, index: number): Movie => {
+  const json = (await res.json()) as TMDBRes;
+  const movies: Movie[] = json.results
+    .filter((_: TMDBMovie, i: number) => i < 8)
+    .map((movie: TMDBMovie, index: number): Movie => {
       return {
         movieId: movie.id,
         title: movie.title,
@@ -116,6 +123,10 @@ export default async function reset() {
   const movieData = await getMovies();
   const theaterData = MakeTheaters(showDate);
 
+  if (movieData === undefined) {
+    return;
+  }
+
   // Push the basic data to prisma
   await prisma.movie.createMany({ data: [...movieData] });
   await prisma.theater.createMany({
@@ -131,18 +142,21 @@ export default async function reset() {
           maxSeats: 64,
           availableSeats: 64,
           theaterId,
-          movieId: movieData[getMovieIndex(theaterId, index % 2 == 0)].movieId,
+          movieId:
+            movieData[getMovieIndex(theaterId, index % 2 == 0)]?.movieId || 0,
         }));
       })
       .flat(),
   });
 
   // Trigger redeploy
-  fetch(`${process.env.RESET_LINK}`);
+  if (process.env.RESET_LINK !== null && process.env.RESET_LINK !== undefined) {
+    void fetch(`${process.env.RESET_LINK}`);
+  }
 
   console.log("Theater Reset.");
 }
 
 if (!process.env.VERCEL_URL) {
-  reset();
+  void reset();
 }
