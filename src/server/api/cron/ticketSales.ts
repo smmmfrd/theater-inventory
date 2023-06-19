@@ -1,5 +1,4 @@
-import { PrismaClient, Showtime, TicketOrder } from "@prisma/client";
-require("dotenv").config();
+import { PrismaClient, type Showtime } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -24,7 +23,8 @@ async function CreateSales(showtimes: Showtime[], name: string) {
         movieId: showtime.movieId,
       },
     });
-    const movieTitle = movie!.title;
+
+    const movieTitle = movie?.title || "";
 
     return {
       name: `${name} ${index}`,
@@ -39,7 +39,7 @@ async function CreateSales(showtimes: Showtime[], name: string) {
   return sales;
 }
 
-async function TicketSales() {
+export default async function TicketSales() {
   // We can assume the showtimes have been created.
   // We should still only get ones that have available seats.
   const showtimes = await prisma.showtime.findMany({
@@ -91,4 +91,4 @@ async function TicketSales() {
   console.log("Tickets Ordered");
 }
 
-TicketSales();
+void TicketSales();
