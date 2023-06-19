@@ -5,7 +5,7 @@
 			"schedule": "23 23 * * 0"
 		},
 		{
-			"path": "/api/cron/ticket",
+			"path": "/api/cron/ticketSales",
 			"schedule": "0 4 * * *"
 		}
 	]
