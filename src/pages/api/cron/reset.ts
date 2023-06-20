@@ -1,5 +1,6 @@
 import { PrismaClient, type Movie } from "@prisma/client";
 import "dotenv/config";
+import moment from "moment-timezone";
 
 const prisma = new PrismaClient();
 
@@ -113,18 +114,15 @@ export default async function reset() {
   await prisma.theater.deleteMany();
 
   // Create the start date
-  let currentDate = new Date();
-  console.log("CURRENT DATE:", currentDate.toString());
-  currentDate = new Date(
-    new Date(currentDate.setHours(10, 30, 0, 0)).toLocaleString("en-US", {
-      timeZone: "America/Los_Angeles",
+  const showDate = moment()
+    .tz("America/Los_Angeles")
+    .weekday(7)
+    .set({
+      hour: 10,
+      minute: 0,
+      second: 0,
     })
-  );
-  console.log("MODIFIED CURRENT DATE:", currentDate.toString());
-  const showDate = new Date(
-    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
-  );
-  console.log("SHOW DATE:", showDate.toString());
+    .toDate();
 
   // Create the starting data
   const movieData = await getMovies();
