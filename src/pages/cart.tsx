@@ -1,11 +1,11 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { useTicketStore } from "~/store/TicketStore";
+import { CartTicketOrder, useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
 
 export default function CartPage() {
   const createTicketOrder = api.ticketOrders.createOrder.useMutation();
-  const { cartTicketOrders } = useTicketStore();
+  const { cartTicketOrders, deleteOrder } = useTicketStore();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -62,6 +62,39 @@ export default function CartPage() {
     setIsSubmitted(false);
   }, [formData, errors, isSubmitted, cartTicketOrders, createTicketOrder]);
 
+  const TicketRow = (ticketOrder: CartTicketOrder) => (
+    <tr
+      className="text-2xl"
+      key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
+    >
+      <td className="">{ticketOrder.number}</td>
+      <td>{ticketOrder.movieTitle}</td>
+      <td>{ticketOrder.showtime}</td>
+      <td className="w- relative">
+        <button
+          className="btn-outline btn-xs btn-circle btn absolute left-0 top-4 border-2"
+          title="Delete Order"
+          onClick={() => deleteOrder(ticketOrder.showtimeId)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="3"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </td>
+    </tr>
+  );
+
   return (
     <>
       <header className="px-8">
@@ -77,26 +110,16 @@ export default function CartPage() {
       {cartTicketOrders.length > 0 && (
         <>
           <section className="px-8">
-            <table className="mx-auto table w-max border-separate bg-primary font-mono">
+            <table className="mx-auto table w-max border-separate bg-primary text-right font-mono">
               <thead>
                 <tr className="text-lg text-neutral-focus [&>*]:pb-0 [&>*]:font-thin">
                   <th>Tickets</th>
                   <th>Movie</th>
                   <th>Showtime</th>
+                  <th></th>
                 </tr>
               </thead>
-              <tbody>
-                {cartTicketOrders.map((ticketOrder) => (
-                  <tr
-                    className="text-2xl"
-                    key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
-                  >
-                    <th className="text-right">{ticketOrder.number}</th>
-                    <th>{ticketOrder.movieTitle}</th>
-                    <th>{ticketOrder.showtime}</th>
-                  </tr>
-                ))}
-              </tbody>
+              <tbody>{cartTicketOrders.map(TicketRow)}</tbody>
             </table>
           </section>
           <section className="px-8">

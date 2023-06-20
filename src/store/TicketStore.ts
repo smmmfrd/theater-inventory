@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type CartTicketOrder = {
+export type CartTicketOrder = {
   number: number;
   showtime: string;
   movieTitle: string;
@@ -13,6 +13,7 @@ interface TicketState {
 
 interface TicketActions {
   addTicket: (newTicketOrder: CartTicketOrder) => void;
+  deleteOrder: (showtimeId: number) => void;
 }
 
 export const useTicketStore = create<TicketState & TicketActions>((set) => ({
@@ -40,4 +41,11 @@ export const useTicketStore = create<TicketState & TicketActions>((set) => ({
         cartTicketOrders: [...state.cartTicketOrders, newTicketOrder],
       };
     }),
+  deleteOrder: (showtimeId) => {
+    set((state) => ({
+      cartTicketOrders: state.cartTicketOrders.filter(
+        (order) => order.showtimeId !== showtimeId
+      ),
+    }));
+  },
 }));

@@ -118,7 +118,9 @@ export default async function reset() {
   currentDate.setHours(10, 30, 0, 0);
   console.log("MODIFIED CURRENT DATE:", currentDate.toString());
   const showDate = new Date(
-    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
+    new Date(
+      currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
+    ).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
   );
   console.log("SHOW DATE:", showDate.toString());
 
