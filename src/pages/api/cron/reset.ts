@@ -113,14 +113,16 @@ export default async function reset() {
   await prisma.theater.deleteMany();
 
   // Create the start date
-  const currentDate = new Date();
+  let currentDate = new Date();
   console.log("CURRENT DATE:", currentDate.toString());
-  currentDate.setHours(10, 30, 0, 0);
+  currentDate = new Date(
+    new Date(currentDate.setHours(10, 30, 0, 0)).toLocaleString("en-US", {
+      timeZone: "America/Los_Angeles",
+    })
+  );
   console.log("MODIFIED CURRENT DATE:", currentDate.toString());
   const showDate = new Date(
-    new Date(
-      currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
-    ).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
+    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
   );
   console.log("SHOW DATE:", showDate.toString());
 
@@ -155,9 +157,9 @@ export default async function reset() {
   });
 
   // Trigger redeploy
-  if (process.env.RESET_LINK !== null && process.env.RESET_LINK !== undefined) {
-    void fetch(`${process.env.RESET_LINK}`);
-  }
+  // if (process.env.RESET_LINK !== null && process.env.RESET_LINK !== undefined) {
+  //   void fetch(`${process.env.RESET_LINK}`);
+  // }
 
   console.log("Theater Reset.");
 }
