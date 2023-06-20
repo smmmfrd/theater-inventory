@@ -69,7 +69,6 @@ export default function ShowtimeCard({
         {showtimes.data?.showtimes.map((showtime) => (
           <Showtime showtime={showtime} key={showtime.showtimeId} />
         ))}
-        {showtimes.data?.showtimes[0]?.time.toString()}
       </div>
     </section>
   );

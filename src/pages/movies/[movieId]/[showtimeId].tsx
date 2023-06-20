@@ -13,6 +13,7 @@ import MovieHero from "~/components/MovieHero";
 import { dateFormatter } from "~/components/ShowtimeCard";
 import { caller } from "~/server/api/root";
 import { useTicketStore } from "~/store/TicketStore";
+import { api } from "~/utils/api";
 
 interface ShowtimeStaticPathParams extends ParsedUrlQuery {
   movieId: string;
@@ -101,6 +102,9 @@ const ShowtimePage: NextPage<
 > = ({ safeShowtime, movie }: ShowtimePageProps) => {
   const router = useRouter();
   const { addTicket: addTickets } = useTicketStore();
+  const { data } = api.showtimes.getShowtime.useQuery({
+    showtimeId: safeShowtime.showtimeId,
+  });
 
   const [time, setTime] = useState("");
   useEffect(() => {
@@ -117,8 +121,11 @@ const ShowtimePage: NextPage<
     let realValue = parseInt(value);
 
     // Prevent hard overwriting (by inputing a number > available seating)
-    if (name === "tickets" && realValue > safeShowtime.availableSeats) {
-      realValue = safeShowtime.availableSeats;
+    const availSeats = data?.showtime
+      ? data.showtime.availableSeats
+      : safeShowtime.availableSeats;
+    if (name === "tickets" && realValue > availSeats) {
+      realValue = availSeats;
     }
 
     setFormData((prevForm) => ({
@@ -145,17 +152,23 @@ const ShowtimePage: NextPage<
         altTitle={`${time} showing for ${movie.title}`}
       />
       <section className="flex flex-col gap-8 px-8">
-        {safeShowtime.availableSeats > 0 ? (
+        {data?.showtime ? (
+          data.showtime.availableSeats
+        ) : safeShowtime.availableSeats > 0 ? (
           <div className="mx-auto">
             <h3 className=" mb-2 text-center text-lg">
               <span className="font-bold underline">Order Tickets</span> - Only{" "}
-              {safeShowtime.availableSeats} Seats Left!
+              {data?.showtime?.availableSeats} Seats Left!
             </h3>
             <form onSubmit={handleSubmit} className="join">
               <input
                 type="number"
                 min="1"
-                max={safeShowtime.availableSeats}
+                max={
+                  data?.showtime
+                    ? data.showtime.availableSeats
+                    : safeShowtime.availableSeats
+                }
                 className="input-bordered input join-item"
                 name="tickets"
                 value={formData.tickets}
