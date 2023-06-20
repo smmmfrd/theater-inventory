@@ -114,10 +114,13 @@ export default async function reset() {
 
   // Create the start date
   const currentDate = new Date();
+  console.log("CURRENT DATE:", currentDate.toString());
   currentDate.setHours(10, 30, 0, 0);
+  console.log("MODIFIED CURRENT DATE:", currentDate.toString());
   const showDate = new Date(
     currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7)
   );
+  console.log("SHOW DATE:", showDate.toString());
 
   // Create the starting data
   const movieData = await getMovies();

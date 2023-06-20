@@ -18,7 +18,26 @@ interface TicketActions {
 export const useTicketStore = create<TicketState & TicketActions>((set) => ({
   cartTicketOrders: [],
   addTicket: (newTicketOrder) =>
-    set((state) => ({
-      cartTicketOrders: [...state.cartTicketOrders, newTicketOrder],
-    })),
+    set((state) => {
+      // Check if the user is adding more tickets to the same showing
+      if (
+        state.cartTicketOrders.some(
+          (order) => order.showtimeId === newTicketOrder.showtimeId
+        )
+      ) {
+        return {
+          cartTicketOrders: state.cartTicketOrders.map((order) => ({
+            ...order,
+            number:
+              order.showtimeId === newTicketOrder.showtimeId
+                ? order.number + newTicketOrder.number
+                : order.number,
+          })),
+        };
+      }
+
+      return {
+        cartTicketOrders: [...state.cartTicketOrders, newTicketOrder],
+      };
+    }),
 }));
