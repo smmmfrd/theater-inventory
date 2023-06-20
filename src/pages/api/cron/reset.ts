@@ -73,30 +73,25 @@ const getMovieIndex = (index: number, even: boolean) => {
   }
 };
 
-function addMinutes(time: Date, minutes: number) {
-  return new Date(time.getTime() + minutes * 60 * 1000);
-}
-
-function addHours(time: Date, hours: number) {
-  return new Date(time.getTime() + hours * 60 * 60 * 1000);
-}
-
-function makeShowtimes(startTime: Date) {
+function makeShowtimes(startTime: moment.Moment) {
   const showtimes = [startTime];
-  let newTime = addHours(startTime, 3);
-  while (newTime.getDate() === startTime.getDate()) {
+  // let newTime = addHours(startTime, 3);
+  let newTime = moment(startTime).add(3, "hours");
+  while (!newTime.isAfter(startTime, "day")) {
     showtimes.push(newTime);
-    newTime = addHours(newTime, 3);
+    // newTime = addHours(newTime, 3);
+    newTime = moment(newTime).add(3, "hours");
   }
 
   return showtimes;
 }
 
-function MakeTheaters(startTime: Date) {
+function MakeTheaters(startTime: moment.Moment) {
   const theaters = Array(16)
     .fill(0)
     .map((_, index) => {
-      const theaterStart = addMinutes(startTime, 15 * index);
+      // const theaterStart = addMinutes(startTime, 15 * index);
+      const theaterStart = moment(startTime).add(15 * index, "minutes");
       const showtimes = makeShowtimes(theaterStart);
 
       return {
@@ -114,15 +109,11 @@ export default async function reset() {
   await prisma.theater.deleteMany();
 
   // Create the start date
-  const showDate = moment()
-    .tz("America/Los_Angeles")
-    .weekday(7)
-    .set({
-      hour: 10,
-      minute: 0,
-      second: 0,
-    })
-    .toDate();
+  const showDate = moment().tz("America/Los_Angeles").weekday(7).set({
+    hour: 10,
+    minute: 0,
+    second: 0,
+  });
 
   // Create the starting data
   const movieData = await getMovies();
@@ -143,7 +134,7 @@ export default async function reset() {
     data: theaterData
       .map(({ showtimes, theaterId }) => {
         return showtimes.map((showtime, index) => ({
-          time: showtime,
+          time: showtime.toDate(),
           maxSeats: 64,
           availableSeats: 64,
           theaterId,
