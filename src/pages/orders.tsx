@@ -1,38 +1,60 @@
 import { type TicketOrder } from "@prisma/client";
+import { caller } from "~/server/api/root";
 import { api } from "~/utils/api";
+import { dateFormatter } from "~/components/ShowtimeCard";
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 
-export default function OrdersPage() {
-  const query = api.ticketOrders.getAllOrders.useQuery();
+type SimpleMovie = {
+  title: string;
+  movieId: number;
+  showtimes: string[];
+};
 
-  if (query.isLoading) {
-    return <div>Loading</div>;
-  }
+type OrdersPageProps = {
+  movies: SimpleMovie[];
+};
 
+export const getStaticProps: GetStaticProps<OrdersPageProps> = async () => {
+  const { moviesWithShowtimes } = await caller.movies.getMoviesWithShowtimes();
+
+  const movies = moviesWithShowtimes.map(
+    (movieNtime): SimpleMovie => ({
+      ...movieNtime,
+      showtimes: movieNtime.showtimes.map(({ time }) =>
+        dateFormatter.format(time)
+      ),
+    })
+  );
+
+  return {
+    props: {
+      movies,
+    },
+  };
+};
+
+const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
+  movies,
+}) => {
   return (
     <>
       <header>
         <h2>Ticket Orders</h2>
       </header>
 
-      <section>
-        {query.data?.orders && <OrdersDisplay orders={query.data.orders} />}
-      </section>
+      <div className="flex flex-wrap gap-2">
+        {movies.map((movie) => {
+          return movie.showtimes.map((time) => (
+            <section key={movie.movieId}>
+              <header className="rounded bg-accent p-2">
+                {movie.title} - {time}
+              </header>
+            </section>
+          ));
+        })}
+      </div>
     </>
   );
-}
-
-type OrdersDisplayType = {
-  orders: TicketOrder[];
 };
 
-function OrdersDisplay({ orders }: OrdersDisplayType) {
-  return <div className="flex flex-wrap gap-2">{orders.map(OrderCard)}</div>;
-}
-
-function OrderCard(order: TicketOrder) {
-  return (
-    <div className="rounded border-4 border-primary bg-primary">
-      {order.name}
-    </div>
-  );
-}
+export default OrdersPage;

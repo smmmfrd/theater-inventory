@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { CartTicketOrder, useTicketStore } from "~/store/TicketStore";
+import { type CartTicketOrder, useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
 
 export default function CartPage() {

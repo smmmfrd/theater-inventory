@@ -152,9 +152,8 @@ const ShowtimePage: NextPage<
         altTitle={`${time} showing for ${movie.title}`}
       />
       <section className="flex flex-col gap-8 px-8">
-        {data?.showtime ? (
-          data.showtime.availableSeats
-        ) : safeShowtime.availableSeats > 0 ? (
+        {data?.showtime?.availableSeats &&
+        data?.showtime?.availableSeats > 0 ? (
           <div className="mx-auto">
             <h3 className=" mb-2 text-center text-lg">
               <span className="font-bold underline">Order Tickets</span> - Only{" "}
