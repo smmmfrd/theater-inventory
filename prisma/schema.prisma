@@ -23,7 +23,7 @@ model Movie {
     ranking       Int
     posterImage   String     @db.Text
     backdropImage String     @db.Text
-    Showtime      Showtime[]
+    showtimes     Showtime[]
 }
 
 model Showtime {
