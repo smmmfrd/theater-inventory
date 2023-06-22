@@ -146,9 +146,13 @@ export default async function reset() {
   });
 
   // Trigger redeploy
-  // if (process.env.RESET_LINK !== null && process.env.RESET_LINK !== undefined) {
-  //   void fetch(`${process.env.RESET_LINK}`);
-  // }
+  if (
+    process.env.RESET_LINK !== null &&
+    process.env.RESET_LINK !== undefined &&
+    !!process.env.VERCEL_URL
+  ) {
+    void fetch(`${process.env.RESET_LINK}`);
+  }
 
   console.log("Theater Reset.");
 }
