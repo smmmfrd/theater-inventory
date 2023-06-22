@@ -64,9 +64,9 @@ export default async function TicketSales() {
   );
 
   const sales = await Promise.all([
-    CreateSales(matineeShowtimes, "Old Couples"),
-    CreateSales(afternoonShowtimes, "Old Couples"),
-    CreateSales(lateNightShowtimes, "Old Couples"),
+    CreateSales(matineeShowtimes, "Old Couple"),
+    CreateSales(afternoonShowtimes, "Couple with Children"),
+    CreateSales(lateNightShowtimes, "Teenage Group"),
   ]);
 
   await prisma.ticketOrder.createMany({
@@ -91,4 +91,6 @@ export default async function TicketSales() {
   console.log("Random Tickets Ordered");
 }
 
-void TicketSales();
+if (!process.env.VERCEL_URL) {
+  void TicketSales();
+}
