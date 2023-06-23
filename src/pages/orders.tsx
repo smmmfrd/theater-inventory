@@ -5,6 +5,8 @@ import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import { useEffect, useState } from "react";
 import { TicketOrder } from "@prisma/client";
 
+import { BiChevronLeftCircle } from "react-icons/bi";
+
 type SimpleMovie = {
   title: string;
   movieId: number;
@@ -65,12 +67,21 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         {movies.map((movie) => {
           return movie.showtimes.map((showtime) => (
             <section key={showtime.showtimeId}>
-              <header className="rounded bg-accent p-2">
-                {movie.title} - {showtime.time}
+              <header className="flex justify-between gap-4 rounded bg-accent p-2">
+                <span>
+                  {movie.title} - {showtime.time}
+                </span>
+                <button onClick={() => setQueryKey(showtime.showtimeId)}>
+                  <BiChevronLeftCircle
+                    className={`text-2xl transition-transform ${
+                      showtime.showtimeId === queryKey
+                        ? "-rotate-90"
+                        : "rotate-0"
+                    }`}
+                  />
+                </button>
               </header>
-              <button onClick={() => setQueryKey(showtime.showtimeId)}>
-                FETCH
-              </button>
+
               {showtime.showtimeId === queryKey && (
                 <ShowtimeData data={data!} isLoading={isLoading} />
               )}
@@ -98,7 +109,6 @@ const ShowtimeData = ({ data, isLoading }: ShowtimeDataTypes) => {
 
   return (
     <div>
-      {/* got the data */}
       {data.orders.map((order) => (
         <div key={order.ticketId}>
           {order.name} - {order.number}
