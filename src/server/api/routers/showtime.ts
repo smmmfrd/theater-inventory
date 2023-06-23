@@ -22,10 +22,9 @@ export const showtimeRouter = createTRPCRouter({
         movieId: showtime.movieId,
         maxSeats: showtime.maxSeats,
         time: showtime.time,
-        availableSeats: showtime.tickets.reduce(
-          (acc, { number }) => acc + number,
-          0
-        ),
+        availableSeats:
+          showtime.maxSeats -
+          showtime.tickets.reduce((acc, { number }) => acc + number, 0),
       }));
 
       return {
@@ -52,10 +51,9 @@ export const showtimeRouter = createTRPCRouter({
         maxSeats: queryShowtime.maxSeats,
         theaterId: queryShowtime.theaterId,
         movieId: queryShowtime.movieId,
-        availableSeats: queryShowtime.tickets.reduce(
-          (acc, { number }) => acc + number,
-          0
-        ),
+        availableSeats:
+          queryShowtime.maxSeats -
+          queryShowtime.tickets.reduce((acc, { number }) => acc + number, 0),
       };
 
       return {

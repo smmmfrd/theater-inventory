@@ -8,6 +8,7 @@ type FlatShowtime = {
   showtimeId: number;
   time: Date;
   tickets: TicketOrder[];
+  maxSeats: number;
   movie: {
     title: string;
   };
@@ -18,7 +19,7 @@ interface FullShowtime extends FlatShowtime {
 }
 
 const randomSales = (availableSeats: number) => {
-  return Math.max(
+  return Math.min(
     1 + Math.ceil(Math.random() * availableSeats * RANDOM_PURCHASE_RATE),
     availableSeats
   );
@@ -29,10 +30,10 @@ function ShuffleArray<T>(arr: T[]): T[] {
   return shuffled;
 }
 
-async function CreateSales(showtimes: FullShowtime[], name: string) {
+function CreateSales(showtimes: FullShowtime[], name: string) {
   const randomizedShowtimes = ShuffleArray(showtimes);
 
-  const preSales = randomizedShowtimes.map((showtime, index) => {
+  const orders = randomizedShowtimes.map((showtime, index) => {
     return {
       name: `${name} ${index}`,
       number: randomSales(showtime.availableSeats),
@@ -41,23 +42,20 @@ async function CreateSales(showtimes: FullShowtime[], name: string) {
     };
   });
 
-  const sales = await Promise.all(preSales);
-
-  return sales;
+  return orders;
 }
 
 const sanitizeShowtime = (
-  showtime: FlatShowtime[],
+  showtimes: FlatShowtime[],
   minHour: number,
   maxHour: number
 ): FullShowtime[] => {
-  return showtime
+  return showtimes
     .map((showtime) => ({
       ...showtime,
-      availableSeats: showtime.tickets.reduce(
-        (acc, { number }) => acc + number,
-        0
-      ),
+      availableSeats:
+        showtime.maxSeats -
+        showtime.tickets.reduce((acc, { number }) => acc + number, 0),
     }))
     .filter(({ time, availableSeats }) => {
       return (
@@ -76,6 +74,7 @@ export default async function TicketSales() {
     select: {
       showtimeId: true,
       time: true,
+      maxSeats: true,
       movie: {
         select: {
           title: true,
@@ -92,32 +91,17 @@ export default async function TicketSales() {
   const afternoonShowtimes = sanitizeShowtime(showtimes, 14, 18);
   const lateNightShowtimes = sanitizeShowtime(showtimes, 18, 24);
 
-  const sales = await Promise.all([
+  const sales = [
     CreateSales(matineeShowtimes, "Old Couple"),
     CreateSales(afternoonShowtimes, "Couple w/ Kids"),
     CreateSales(lateNightShowtimes, "Teenage Group"),
-  ]);
+  ].flat();
 
-  await prisma.ticketOrder.createMany({
-    data: sales.flat(),
+  const orders = await prisma.ticketOrder.createMany({
+    data: sales,
   });
 
-  // const orders = sales.flat().map(async (sale) => {
-  //   return await prisma.showtime.update({
-  //     where: {
-  //       showtimeId: sale.showtimeId,
-  //     },
-  //     data: {
-  //       availableSeats: {
-  //         decrement: sale.number,
-  //       },
-  //     },
-  //   });
-  // });
-
-  // await Promise.all(orders);
-
-  console.log("Random Tickets Ordered");
+  console.log(orders.count, "Random Tickets Orders Made");
   console.timeEnd("Exec");
 }
 
