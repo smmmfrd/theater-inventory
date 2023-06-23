@@ -1,11 +1,27 @@
-import { PrismaClient, type Showtime } from "@prisma/client";
+import { PrismaClient, type TicketOrder } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const RANDOM_PURCHASE_RATE = 0.15;
 
+type FlatShowtime = {
+  showtimeId: number;
+  time: Date;
+  tickets: TicketOrder[];
+  movie: {
+    title: string;
+  };
+};
+
+interface FullShowtime extends FlatShowtime {
+  availableSeats: number;
+}
+
 const randomSales = (availableSeats: number) => {
-  return 1 + Math.ceil(Math.random() * availableSeats * RANDOM_PURCHASE_RATE);
+  return Math.max(
+    1 + Math.ceil(Math.random() * availableSeats * RANDOM_PURCHASE_RATE),
+    availableSeats
+  );
 };
 
 function ShuffleArray<T>(arr: T[]): T[] {
@@ -13,23 +29,14 @@ function ShuffleArray<T>(arr: T[]): T[] {
   return shuffled;
 }
 
-async function CreateSales(showtimes: Showtime[], name: string) {
+async function CreateSales(showtimes: FullShowtime[], name: string) {
   const randomizedShowtimes = ShuffleArray(showtimes);
 
-  const preSales = randomizedShowtimes.map(async (showtime, index) => {
-    // We need to get it's movie
-    const movie = await prisma.movie.findFirst({
-      where: {
-        movieId: showtime.movieId,
-      },
-    });
-
-    const movieTitle = movie?.title || "";
-
+  const preSales = randomizedShowtimes.map((showtime, index) => {
     return {
       name: `${name} ${index}`,
       number: randomSales(showtime.availableSeats),
-      movieTitle,
+      movieTitle: showtime.movie.title,
       showtimeId: showtime.showtimeId,
     };
   });
@@ -39,33 +46,55 @@ async function CreateSales(showtimes: Showtime[], name: string) {
   return sales;
 }
 
+const sanitizeShowtime = (
+  showtime: FlatShowtime[],
+  minHour: number,
+  maxHour: number
+): FullShowtime[] => {
+  return showtime
+    .map((showtime) => ({
+      ...showtime,
+      availableSeats: showtime.tickets.reduce(
+        (acc, { number }) => acc + number,
+        0
+      ),
+    }))
+    .filter(({ time, availableSeats }) => {
+      return (
+        time.getHours() >= minHour &&
+        time.getHours() < maxHour &&
+        availableSeats > 0
+      );
+    });
+};
+
 export default async function TicketSales() {
+  console.time("Exec");
   // We can assume the showtimes have been created.
   // We should still only get ones that have available seats.
   const showtimes = await prisma.showtime.findMany({
-    where: {
-      availableSeats: {
-        gt: 0,
+    select: {
+      showtimeId: true,
+      time: true,
+      movie: {
+        select: {
+          title: true,
+        },
       },
+      tickets: true,
     },
     orderBy: {
       time: "asc",
     },
   });
 
-  const matineeShowtimes = showtimes.filter(
-    ({ time }) => time.getHours() >= 10 && time.getHours() < 14
-  );
-  const afternoonShowtimes = showtimes.filter(
-    ({ time }) => time.getHours() >= 14 && time.getHours() < 18
-  );
-  const lateNightShowtimes = showtimes.filter(
-    ({ time }) => time.getHours() >= 18 && time.getHours() <= 23
-  );
+  const matineeShowtimes = sanitizeShowtime(showtimes, 10, 14);
+  const afternoonShowtimes = sanitizeShowtime(showtimes, 14, 18);
+  const lateNightShowtimes = sanitizeShowtime(showtimes, 18, 24);
 
   const sales = await Promise.all([
     CreateSales(matineeShowtimes, "Old Couple"),
-    CreateSales(afternoonShowtimes, "Couple with Children"),
+    CreateSales(afternoonShowtimes, "Couple w/ Kids"),
     CreateSales(lateNightShowtimes, "Teenage Group"),
   ]);
 
@@ -73,22 +102,23 @@ export default async function TicketSales() {
     data: sales.flat(),
   });
 
-  const orders = sales.flat().map(async (sale) => {
-    await prisma.showtime.update({
-      where: {
-        showtimeId: sale.showtimeId,
-      },
-      data: {
-        availableSeats: {
-          decrement: sale.number,
-        },
-      },
-    });
-  });
+  // const orders = sales.flat().map(async (sale) => {
+  //   return await prisma.showtime.update({
+  //     where: {
+  //       showtimeId: sale.showtimeId,
+  //     },
+  //     data: {
+  //       availableSeats: {
+  //         decrement: sale.number,
+  //       },
+  //     },
+  //   });
+  // });
 
-  await Promise.all(orders);
+  // await Promise.all(orders);
 
   console.log("Random Tickets Ordered");
+  console.timeEnd("Exec");
 }
 
 if (!process.env.VERCEL_URL) {
