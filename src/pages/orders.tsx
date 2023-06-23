@@ -43,7 +43,7 @@ export const getStaticProps: GetStaticProps<OrdersPageProps> = async () => {
 const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   movies,
 }) => {
-  const [queryKey, setQueryKey] = useState(0);
+  const [queryKey, setQueryKey] = useState(-1);
 
   const { data, refetch, isLoading } = api.ticketOrders.getOrders.useQuery(
     { showtimeId: queryKey },
@@ -71,7 +71,15 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 <span>
                   {movie.title} - {showtime.time}
                 </span>
-                <button onClick={() => setQueryKey(showtime.showtimeId)}>
+                <button
+                  onClick={() =>
+                    setQueryKey(
+                      showtime.showtimeId === queryKey
+                        ? -1
+                        : showtime.showtimeId
+                    )
+                  }
+                >
                   <BiChevronLeftCircle
                     className={`text-2xl transition-transform ${
                       showtime.showtimeId === queryKey
