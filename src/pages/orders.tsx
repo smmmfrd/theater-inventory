@@ -2,6 +2,8 @@ import { caller } from "~/server/api/root";
 import { api } from "~/utils/api";
 import { dateFormatter } from "~/components/ShowtimeCard";
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import { useEffect, useState } from "react";
+import { TicketOrder } from "@prisma/client";
 
 type SimpleMovie = {
   title: string;
@@ -39,7 +41,19 @@ export const getStaticProps: GetStaticProps<OrdersPageProps> = async () => {
 const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   movies,
 }) => {
-  // const {data, refetch} = api.
+  const [queryKey, setQueryKey] = useState(0);
+
+  const { data, refetch, isLoading } = api.ticketOrders.getOrders.useQuery(
+    { showtimeId: queryKey },
+    {
+      refetchOnWindowFocus: false,
+      enabled: false,
+    }
+  );
+
+  useEffect(() => {
+    void refetch();
+  }, [refetch, queryKey]);
 
   return (
     <>
@@ -50,10 +64,16 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <div className="flex flex-wrap gap-2">
         {movies.map((movie) => {
           return movie.showtimes.map((showtime) => (
-            <section key={movie.movieId}>
+            <section key={showtime.showtimeId}>
               <header className="rounded bg-accent p-2">
                 {movie.title} - {showtime.time}
               </header>
+              <button onClick={() => setQueryKey(showtime.showtimeId)}>
+                FETCH
+              </button>
+              {showtime.showtimeId === queryKey && (
+                <ShowtimeData data={data!} isLoading={isLoading} />
+              )}
             </section>
           ));
         })}
@@ -63,3 +83,27 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 };
 
 export default OrdersPage;
+
+type ShowtimeDataTypes = {
+  data: {
+    orders: TicketOrder[];
+  };
+  isLoading: boolean;
+};
+
+const ShowtimeData = ({ data, isLoading }: ShowtimeDataTypes) => {
+  if (isLoading) {
+    return <div>loading</div>;
+  }
+
+  return (
+    <div>
+      {/* got the data */}
+      {data.orders.map((order) => (
+        <div key={order.ticketId}>
+          {order.name} - {order.number}
+        </div>
+      ))}
+    </div>
+  );
+};

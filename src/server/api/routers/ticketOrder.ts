@@ -46,4 +46,15 @@ export const ticketOrderRouter = createTRPCRouter({
         goodTickets: finishedUpdates.reduce((total, num) => total + num, 0),
       };
     }),
+  getOrders: publicProcedure
+    .input(z.object({ showtimeId: z.number() }))
+    .query(async ({ input: { showtimeId }, ctx }) => {
+      const orders = await ctx.prisma.ticketOrder.findMany({
+        where: {
+          showtimeId,
+        },
+      });
+
+      return { orders };
+    }),
 });

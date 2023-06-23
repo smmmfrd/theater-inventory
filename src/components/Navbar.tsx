@@ -6,6 +6,11 @@ export default function Navbar() {
       <Link href="/" className="link no-underline hover:underline">
         <h1 className="text-2xl font-thin">Fake Theater</h1>
       </Link>
+      <div>
+        <Link href="/orders" className="link no-underline hover:underline">
+          <h1 className="font-thin">Orders</h1>
+        </Link>
+      </div>
     </nav>
   );
 }
