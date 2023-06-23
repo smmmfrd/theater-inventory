@@ -1,4 +1,3 @@
-import { Showtime } from "@prisma/client";
 import Link from "next/link";
 import { api } from "~/utils/api";
 
@@ -28,7 +27,19 @@ const showtimeAvailabilityWidths = {
   "12": "w-full",
 };
 
-function Showtime({ showtime }: { showtime: Showtime }) {
+type MiniShowtime = {
+  availableSeats: number;
+  maxSeats: number;
+  movieId: number;
+  showtimeId: number;
+  time: Date;
+};
+
+type ShowtimePieceProps = {
+  showtime: MiniShowtime;
+};
+
+function ShowtimePiece({ showtime }: ShowtimePieceProps) {
   const width =
     showtimeAvailabilityWidths[
       `${Math.ceil(
@@ -67,7 +78,7 @@ export default function ShowtimeCard({
       {/* TODO: Should do - https://stackoverflow.com/questions/71035013/how-to-create-a-tailwindcss-grid-with-a-dynamic-amount-of-grid-columns */}
       <div className="grid grid-cols-3 justify-items-center gap-y-2 lg:grid-cols-6">
         {showtimes.data?.showtimes.map((showtime) => (
-          <Showtime showtime={showtime} key={showtime.showtimeId} />
+          <ShowtimePiece showtime={showtime} key={showtime.showtimeId} />
         ))}
       </div>
     </section>

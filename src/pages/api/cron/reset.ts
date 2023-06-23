@@ -136,7 +136,6 @@ export default async function reset() {
         return showtimes.map((showtime, index) => ({
           time: showtime.toDate(),
           maxSeats: 64,
-          availableSeats: 64,
           theaterId,
           movieId:
             movieData[getMovieIndex(theaterId, index % 2 == 0)]?.movieId || 0,

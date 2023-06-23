@@ -5,14 +5,28 @@ export const showtimeRouter = createTRPCRouter({
   getShowtimes: publicProcedure
     .input(z.object({ movieId: z.number() }))
     .query(async ({ input: { movieId }, ctx }) => {
-      const showtimes = await ctx.prisma.showtime.findMany({
+      const queryShowtimes = await ctx.prisma.showtime.findMany({
         where: {
           movieId,
         },
         orderBy: {
           time: "asc",
         },
+        include: {
+          tickets: true,
+        },
       });
+
+      const showtimes = queryShowtimes.map((showtime) => ({
+        showtimeId: showtime.showtimeId,
+        movieId: showtime.movieId,
+        maxSeats: showtime.maxSeats,
+        time: showtime.time,
+        availableSeats: showtime.tickets.reduce(
+          (acc, { number }) => acc + number,
+          0
+        ),
+      }));
 
       return {
         showtimes,
@@ -21,11 +35,28 @@ export const showtimeRouter = createTRPCRouter({
   getShowtime: publicProcedure
     .input(z.object({ showtimeId: z.number() }))
     .query(async ({ input: { showtimeId }, ctx }) => {
-      const showtime = await ctx.prisma.showtime.findUnique({
+      const queryShowtime = await ctx.prisma.showtime.findUnique({
         where: {
           showtimeId,
         },
+        include: {
+          tickets: true,
+        },
       });
+
+      if (queryShowtime === null) return {};
+
+      const showtime = {
+        showtimeId: queryShowtime.showtimeId,
+        time: queryShowtime.time,
+        maxSeats: queryShowtime.maxSeats,
+        theaterId: queryShowtime.theaterId,
+        movieId: queryShowtime.movieId,
+        availableSeats: queryShowtime.tickets.reduce(
+          (acc, { number }) => acc + number,
+          0
+        ),
+      };
 
       return {
         showtime,

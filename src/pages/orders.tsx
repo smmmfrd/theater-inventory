@@ -3,7 +3,7 @@ import { api } from "~/utils/api";
 import { dateFormatter } from "~/components/ShowtimeCard";
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import { useEffect, useState } from "react";
-import { TicketOrder } from "@prisma/client";
+import { type TicketOrder } from "@prisma/client";
 
 import { BiChevronLeftCircle } from "react-icons/bi";
 
@@ -90,9 +90,11 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 </button>
               </header>
 
-              {showtime.showtimeId === queryKey && (
-                <ShowtimeData data={data!} isLoading={isLoading} />
-              )}
+              {showtime.showtimeId === queryKey &&
+                data !== null &&
+                data?.orders !== undefined && (
+                  <ShowtimeData data={data} isLoading={isLoading} />
+                )}
             </section>
           ));
         })}
