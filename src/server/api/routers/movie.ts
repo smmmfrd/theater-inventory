@@ -42,6 +42,7 @@ export const movieRouter = createTRPCRouter({
         showtimes: {
           select: {
             time: true,
+            showtimeId: true,
           },
           orderBy: {
             time: "asc",

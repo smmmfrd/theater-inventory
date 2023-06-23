@@ -1,4 +1,3 @@
-import { type TicketOrder } from "@prisma/client";
 import { caller } from "~/server/api/root";
 import { api } from "~/utils/api";
 import { dateFormatter } from "~/components/ShowtimeCard";
@@ -7,7 +6,10 @@ import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 type SimpleMovie = {
   title: string;
   movieId: number;
-  showtimes: string[];
+  showtimes: {
+    time: string;
+    showtimeId: number;
+  }[];
 };
 
 type OrdersPageProps = {
@@ -20,9 +22,10 @@ export const getStaticProps: GetStaticProps<OrdersPageProps> = async () => {
   const movies = moviesWithShowtimes.map(
     (movieNtime): SimpleMovie => ({
       ...movieNtime,
-      showtimes: movieNtime.showtimes.map(({ time }) =>
-        dateFormatter.format(time)
-      ),
+      showtimes: movieNtime.showtimes.map(({ time, showtimeId }) => ({
+        time: dateFormatter.format(time),
+        showtimeId,
+      })),
     })
   );
 
@@ -36,6 +39,8 @@ export const getStaticProps: GetStaticProps<OrdersPageProps> = async () => {
 const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   movies,
 }) => {
+  // const {data, refetch} = api.
+
   return (
     <>
       <header>
@@ -44,10 +49,10 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
       <div className="flex flex-wrap gap-2">
         {movies.map((movie) => {
-          return movie.showtimes.map((time) => (
+          return movie.showtimes.map((showtime) => (
             <section key={movie.movieId}>
               <header className="rounded bg-accent p-2">
-                {movie.title} - {time}
+                {movie.title} - {showtime.time}
               </header>
             </section>
           ));
