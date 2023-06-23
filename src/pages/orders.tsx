@@ -4,8 +4,7 @@ import { dateFormatter } from "~/components/ShowtimeCard";
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import { useEffect, useState } from "react";
 import { type TicketOrder } from "@prisma/client";
-
-import { BiChevronLeftCircle } from "react-icons/bi";
+import Image from "next/image";
 
 type SimpleMovie = {
   title: string;
@@ -72,6 +71,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                   {movie.title} - {showtime.time}
                 </span>
                 <button
+                  title="Open showtime's order list."
                   onClick={() =>
                     setQueryKey(
                       showtime.showtimeId === queryKey
@@ -80,12 +80,11 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                     )
                   }
                 >
-                  <BiChevronLeftCircle
-                    className={`text-2xl transition-transform ${
-                      showtime.showtimeId === queryKey
-                        ? "-rotate-90"
-                        : "rotate-0"
-                    }`}
+                  <Image
+                    src="/bx-chevron-left-circle.svg"
+                    alt="Chevron Icon for opening this showtime's order list"
+                    width="24"
+                    height="24"
                   />
                 </button>
               </header>
