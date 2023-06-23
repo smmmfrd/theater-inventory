@@ -27,6 +27,22 @@ export const ticketOrderRouter = createTRPCRouter({
 
       return;
     }),
+  createManyOrders: publicProcedure
+    .input(
+      z
+        .object({
+          name: z.string(),
+          number: z.number(),
+          movieTitle: z.string(),
+          showtimeId: z.number(),
+        })
+        .array()
+    )
+    .mutation(async ({ input, ctx }) => {
+      const orders = await ctx.prisma.ticketOrder.createMany({ data: input });
+
+      return orders.count;
+    }),
   getOrders: publicProcedure
     .input(z.object({ showtimeId: z.number() }))
     .query(async ({ input: { showtimeId }, ctx }) => {

@@ -21,7 +21,7 @@ interface ShowtimeStaticPathParams extends ParsedUrlQuery {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { showtimes } = await caller.showtimes.getAllShowtimes();
+  const { showtimes } = await caller.showtimes.getAllShowtimeAndMovieIds();
   const paths = showtimes.map((showtime) => ({
     params: {
       showtimeId: `${showtime.showtimeId}`,

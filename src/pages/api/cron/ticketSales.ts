@@ -1,6 +1,5 @@
 import { PrismaClient, type TicketOrder } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { caller } from "~/server/api/root";
 
 const RANDOM_PURCHASE_RATE = 0.15;
 
@@ -70,6 +69,30 @@ export default async function TicketSales() {
   console.time("Exec");
   // We can assume the showtimes have been created.
   // We should still only get ones that have available seats.
+  const { showtimes } = await caller.showtimes.getAllShowtimes();
+
+  const matineeShowtimes = sanitizeShowtime(showtimes, 10, 14);
+  const afternoonShowtimes = sanitizeShowtime(showtimes, 14, 18);
+  const lateNightShowtimes = sanitizeShowtime(showtimes, 18, 24);
+
+  const sales = [
+    CreateSales(matineeShowtimes, "Old Couple"),
+    CreateSales(afternoonShowtimes, "Couple w/ Kids"),
+    CreateSales(lateNightShowtimes, "Teenage Group"),
+  ].flat();
+
+  const orders = await caller.ticketOrders.createManyOrders(sales);
+
+  console.log(orders, "Random Tickets Orders Made");
+  console.timeEnd("Exec");
+}
+
+async function LocalTicketSales() {
+  console.time("Exec");
+  const prisma = new PrismaClient();
+
+  // We can assume the showtimes have been created.
+  // We should still only get ones that have available seats.
   const showtimes = await prisma.showtime.findMany({
     select: {
       showtimeId: true,
@@ -106,5 +129,5 @@ export default async function TicketSales() {
 }
 
 if (!process.env.VERCEL_URL) {
-  void TicketSales();
+  void LocalTicketSales();
 }
