@@ -9,5 +9,5 @@ export default async function handler(
 
   console.log(showtimes.length);
 
-  res.status(200);
+  res.status(200).json({ message: "fuck you vercel" });
 }
