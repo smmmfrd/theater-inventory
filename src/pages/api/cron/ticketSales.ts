@@ -1,9 +1,13 @@
-// import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { caller } from "~/server/api/root";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  res.status(200).json({ text: "fuck you vercel" });
+  const { showtimes } = await caller.showtimes.getAllShowtimes();
+
+  console.log(showtimes.length);
+
+  res.status(200);
 }
