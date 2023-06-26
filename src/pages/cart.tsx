@@ -99,7 +99,7 @@ export default function CartPage() {
     <>
       <header className="px-8">
         <h2 className="mt-8 text-4xl font-bold underline">
-          Cart {cartTicketOrders.length === 0 && "Is Empty"}
+          Your Cart {cartTicketOrders.length === 0 && "Is Empty!"}
         </h2>
         {cartTicketOrders.length === 0 && (
           <Link href="/" className="btn-primary btn mx-auto mt-12">
