@@ -53,7 +53,9 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   );
 
   useEffect(() => {
-    void refetch();
+    if (queryKey > -1) {
+      void refetch();
+    }
   }, [refetch, queryKey]);
 
   return (
@@ -89,11 +91,9 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 </button>
               </header>
 
-              {showtime.showtimeId === queryKey &&
-                data !== null &&
-                data?.orders !== undefined && (
-                  <ShowtimeData data={data} isLoading={isLoading} />
-                )}
+              {showtime.showtimeId === queryKey && (
+                <ShowtimeData data={data} isLoading={isLoading} />
+              )}
             </section>
           ));
         })}
@@ -105,9 +105,11 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 export default OrdersPage;
 
 type ShowtimeDataTypes = {
-  data: {
-    orders: TicketOrder[];
-  };
+  data:
+    | {
+        orders: TicketOrder[];
+      }
+    | undefined;
   isLoading: boolean;
 };
 
@@ -118,7 +120,7 @@ const ShowtimeData = ({ data, isLoading }: ShowtimeDataTypes) => {
 
   return (
     <div>
-      {data.orders.map((order) => (
+      {data?.orders.map((order) => (
         <div key={order.ticketId}>
           {order.name} - {order.number}
         </div>
