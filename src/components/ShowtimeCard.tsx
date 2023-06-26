@@ -76,8 +76,7 @@ export default function ShowtimeCard({
   return (
     <section className={`bg-neutral ${styleExtensions}`}>
       <h4 className="mb-2 font-bold text-base-100 underline">Showtimes</h4>
-      {/* TODO: Should do - https://stackoverflow.com/questions/71035013/how-to-create-a-tailwindcss-grid-with-a-dynamic-amount-of-grid-columns */}
-      <div className="grid grid-cols-3 justify-items-center gap-y-2 lg:grid-cols-6">
+      <div className="flex flex-wrap justify-center gap-2">
         {isLoading ? (
           <div className="text-base-100">loading...</div>
         ) : (
