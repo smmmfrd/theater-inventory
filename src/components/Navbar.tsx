@@ -20,6 +20,11 @@ export default function Navbar() {
           </Link>
         </li>
         <li>
+          <Link href="/about" className="link no-underline hover:underline">
+            <h1 className="font-thin">About</h1>
+          </Link>
+        </li>
+        <li>
           <Link href="/cart" className="link no-underline hover:underline">
             <h1 className="font-thin">
               Cart{" "}
