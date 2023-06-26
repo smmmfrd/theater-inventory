@@ -87,6 +87,11 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                     alt="Chevron Icon for opening this showtime's order list"
                     width="24"
                     height="24"
+                    className={`transition-transform ${
+                      showtime.showtimeId === queryKey
+                        ? "-rotate-90"
+                        : "rotate-0"
+                    }`}
                   />
                 </button>
               </header>
