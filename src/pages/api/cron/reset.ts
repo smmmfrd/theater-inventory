@@ -1,3 +1,4 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient, type Movie } from "@prisma/client";
 import "dotenv/config";
 import moment from "moment-timezone";
@@ -103,7 +104,7 @@ function MakeTheaters(startTime: moment.Moment) {
   return theaters;
 }
 
-export default async function reset() {
+export default async function reset(req: NextApiRequest, res: NextApiResponse) {
   // Clear out all old data
   await prisma.movie.deleteMany();
   await prisma.theater.deleteMany();
@@ -154,8 +155,10 @@ export default async function reset() {
   }
 
   console.log("Theater Reset.");
+
+  res.status(200).json({ message: "Success" });
 }
 
 if (!process.env.VERCEL_URL) {
-  void reset();
+  // void reset();
 }
