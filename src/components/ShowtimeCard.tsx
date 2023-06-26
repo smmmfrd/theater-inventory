@@ -11,6 +11,7 @@ export const dateFormatter = new Intl.DateTimeFormat("default", {
   minute: "numeric",
 });
 
+// Tailwind needs to compile all class names, so we can't have fully dynamic widths, so we use a table.
 const showtimeAvailabilityWidths = {
   "0": "w-0",
   "1": "w-1/12",
@@ -64,7 +65,7 @@ export default function ShowtimeCard({
   styleExtensions = "",
   movieId,
 }: ShowtimeCardProps) {
-  const showtimes = api.showtimes.getShowtimes.useQuery(
+  const { data, isLoading } = api.showtimes.getShowtimes.useQuery(
     { movieId },
     {
       refetchOnWindowFocus: false,
@@ -77,9 +78,13 @@ export default function ShowtimeCard({
       <h4 className="mb-2 font-bold text-base-100 underline">Showtimes</h4>
       {/* TODO: Should do - https://stackoverflow.com/questions/71035013/how-to-create-a-tailwindcss-grid-with-a-dynamic-amount-of-grid-columns */}
       <div className="grid grid-cols-3 justify-items-center gap-y-2 lg:grid-cols-6">
-        {showtimes.data?.showtimes.map((showtime) => (
-          <ShowtimePiece showtime={showtime} key={showtime.showtimeId} />
-        ))}
+        {isLoading ? (
+          <div className="text-base-100">loading...</div>
+        ) : (
+          data?.showtimes.map((showtime) => (
+            <ShowtimePiece showtime={showtime} key={showtime.showtimeId} />
+          ))
+        )}
       </div>
     </section>
   );
