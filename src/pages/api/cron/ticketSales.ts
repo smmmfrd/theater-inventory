@@ -1,4 +1,5 @@
-import { type TicketOrder } from "@prisma/client";
+import { PrismaClient, type TicketOrder } from "@prisma/client";
+import moment from "moment-timezone";
 import { NextApiRequest, NextApiResponse } from "next";
 import { caller } from "~/server/api/root";
 
@@ -31,11 +32,8 @@ const sanitizeShowtime = (
         showtime.tickets.reduce((acc, { number }) => acc + number, 0),
     }))
     .filter(({ time, availableSeats }) => {
-      return (
-        time.getHours() >= minHour &&
-        time.getHours() < maxHour &&
-        availableSeats > 0
-      );
+      const m = moment(time).tz("America/Los_Angeles");
+      return m.hour() >= minHour && m.hour() < maxHour && availableSeats > 0;
     });
 };
 
@@ -72,8 +70,6 @@ export default async function handler(
 ) {
   const { showtimes } = await caller.showtimes.getAllShowtimes();
 
-  console.log(showtimes.length);
-
   const matineeShowtimes = sanitizeShowtime(showtimes, 10, 14);
   const afternoonShowtimes = sanitizeShowtime(showtimes, 14, 18);
   const lateNightShowtimes = sanitizeShowtime(showtimes, 18, 24);
@@ -87,8 +83,45 @@ export default async function handler(
   const orders = await caller.ticketOrders.createManyOrders(sales);
 
   console.log(orders, " random ticket orders made.");
-  // Ok, so it needs this line to make it go.
-  // Literally never says this anywhere lmao, and they even do it wrong in their own example.
-  // Also watch that memory used...
+
   res.status(200).json({ message: "Success" });
 }
+
+// async function localHandler() {
+//   const prisma = new PrismaClient();
+
+//   const showtimes = await prisma.showtime.findMany({
+//     select: {
+//       showtimeId: true,
+//       time: true,
+//       maxSeats: true,
+//       movie: {
+//         select: {
+//           title: true,
+//         },
+//       },
+//       tickets: true,
+//     },
+//     orderBy: {
+//       time: "asc",
+//     },
+//   });
+
+//   const matineeShowtimes = sanitizeShowtime(showtimes, 10, 14);
+//   const afternoonShowtimes = sanitizeShowtime(showtimes, 14, 18);
+//   const lateNightShowtimes = sanitizeShowtime(showtimes, 18, 24);
+
+//   const sales = [
+//     CreateSales(matineeShowtimes, "Old Couple"),
+//     CreateSales(afternoonShowtimes, "Couple w/ Kids"),
+//     CreateSales(lateNightShowtimes, "Teenage Group"),
+//   ].flat();
+
+//   const orders = await prisma.ticketOrder.createMany({ data: sales });
+
+//   console.log(orders, " random ticket orders made.");
+// }
+
+// if (!process.env.VERCEL_URL) {
+//   void localHandler();
+// }
