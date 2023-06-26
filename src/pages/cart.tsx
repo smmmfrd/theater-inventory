@@ -64,7 +64,7 @@ export default function CartPage() {
 
   const TicketRow = (ticketOrder: CartTicketOrder) => (
     <tr
-      className="text-2xl"
+      className="text-xl [&>*]:p-2"
       key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
     >
       <td className="">{ticketOrder.number}</td>
@@ -72,7 +72,7 @@ export default function CartPage() {
       <td>{ticketOrder.showtime}</td>
       <td className="w- relative">
         <button
-          className="btn-outline btn-xs btn-circle btn absolute left-0 top-4 border-2"
+          className="btn-outline btn-xs btn-circle btn absolute left-0 top-2.5 border-2"
           title="Delete Order"
           onClick={() => deleteOrder(ticketOrder.showtimeId)}
         >
@@ -109,17 +109,17 @@ export default function CartPage() {
       </header>
       {cartTicketOrders.length > 0 && (
         <>
-          <section className="px-8">
-            <table className="mx-auto table w-max border-separate bg-primary text-right font-mono">
+          <section className="mx-8 rounded-xl border-2 border-primary">
+            <table className="mx-auto table border-separate text-right font-mono">
               <thead>
-                <tr className="text-lg text-neutral-focus [&>*]:pb-0 [&>*]:font-thin">
+                <tr className="text-lg text-neutral-focus [&>*]:pb-0 [&>*]:font-bold">
                   <th>Tickets</th>
                   <th>Movie</th>
                   <th>Showtime</th>
                   <th></th>
                 </tr>
               </thead>
-              <tbody>{cartTicketOrders.map(TicketRow)}</tbody>
+              <tbody className="">{cartTicketOrders.map(TicketRow)}</tbody>
             </table>
           </section>
           <section className="px-8">
