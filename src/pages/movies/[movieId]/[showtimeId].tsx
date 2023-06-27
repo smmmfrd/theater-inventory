@@ -109,21 +109,20 @@ const ShowtimePage: NextPage<
     setTime(dateFormatter.format(new Date(safeShowtime.time)));
   }, [safeShowtime.time]);
 
-  const LogicDisplay = () => {
+  const DisplayForm = () => {
     if (isLoading) {
       return <div>loading</div>;
     }
 
-    if (
-      data?.showtime.availableSeats !== undefined &&
-      data.showtime.availableSeats > 0
-    ) {
-      <ShowtimePageForm
-        availableSeats={data.showtime.availableSeats}
-        time={time}
-        movieTitle={movie.title}
-        showtimeId={safeShowtime.showtimeId}
-      />;
+    if (data?.showtime && data.showtime.availableSeats > 0) {
+      return (
+        <ShowtimePageForm
+          availableSeats={data.showtime.availableSeats}
+          time={time}
+          movieTitle={movie.title}
+          showtimeId={safeShowtime.showtimeId}
+        />
+      );
     }
 
     return (
@@ -140,7 +139,7 @@ const ShowtimePage: NextPage<
         altTitle={`${time} showing for ${movie.title}`}
       />
       <section className="flex flex-col gap-8 px-8">
-        <LogicDisplay />
+        <DisplayForm />
 
         <Link
           href={`/movies/${movie.movieId}`}
