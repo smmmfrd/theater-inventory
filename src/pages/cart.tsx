@@ -4,8 +4,12 @@ import { type CartTicketOrder, useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
 
 export default function CartPage() {
-  const createTicketOrder = api.ticketOrders.createOrder.useMutation();
-  const { cartTicketOrders, deleteOrder } = useTicketStore();
+  const { cartTicketOrders, deleteOrder, clearOrders } = useTicketStore();
+  const { mutate, isSuccess } = api.ticketOrders.createOrder.useMutation({
+    onSuccess: () => {
+      clearOrders();
+    },
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -50,7 +54,7 @@ export default function CartPage() {
     if (
       Object.keys(errors).every((key) => !errors[key as keyof typeof errors])
     ) {
-      createTicketOrder.mutate({
+      mutate({
         name: formData.name,
         orders: cartTicketOrders.map((order) => ({
           movieTitle: order.movieTitle,
@@ -60,19 +64,19 @@ export default function CartPage() {
       });
     }
     setIsSubmitted(false);
-  }, [formData, errors, isSubmitted, cartTicketOrders, createTicketOrder]);
+  }, [formData, errors, isSubmitted, cartTicketOrders, mutate]);
 
   const TicketRow = (ticketOrder: CartTicketOrder) => (
     <tr
-      className="text-xl [&>*]:p-2"
+      className="text-xl [&>*]:p-2.5"
       key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
     >
       <td className="">{ticketOrder.number}</td>
       <td>{ticketOrder.movieTitle}</td>
       <td>{ticketOrder.showtime}</td>
-      <td className="w- relative">
+      <td className="relative">
         <button
-          className="btn-outline btn-xs btn-circle btn absolute left-0 top-2.5 border-2"
+          className="btn-outline btn-xs btn-circle btn absolute left-0 top-3 border-2"
           title="Delete Order"
           onClick={() => deleteOrder(ticketOrder.showtimeId)}
         >
@@ -146,7 +150,7 @@ export default function CartPage() {
               </p>
             )}
 
-            {createTicketOrder.isSuccess && <p>Order Placed!</p>}
+            {isSuccess && <p>Order Placed!</p>}
           </section>
         </>
       )}

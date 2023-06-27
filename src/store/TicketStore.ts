@@ -14,6 +14,7 @@ interface TicketState {
 interface TicketActions {
   addTicket: (newTicketOrder: CartTicketOrder) => void;
   deleteOrder: (showtimeId: number) => void;
+  clearOrders: () => void;
 }
 
 export const useTicketStore = create<TicketState & TicketActions>((set) => ({
@@ -46,6 +47,11 @@ export const useTicketStore = create<TicketState & TicketActions>((set) => ({
       cartTicketOrders: state.cartTicketOrders.filter(
         (order) => order.showtimeId !== showtimeId
       ),
+    }));
+  },
+  clearOrders: () => {
+    set(() => ({
+      cartTicketOrders: [],
     }));
   },
 }));
