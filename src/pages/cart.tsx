@@ -7,7 +7,8 @@ export default function CartPage() {
   const { cartTicketOrders, deleteOrder, clearOrders } = useTicketStore();
   const { mutate, isLoading, isSuccess } =
     api.ticketOrders.createOrder.useMutation({
-      onSuccess: () => {
+      onSuccess: (data) => {
+        setErrors((prev) => ({ ...prev, badShowtimeIds: data }));
         clearOrders();
       },
     });
@@ -26,10 +27,12 @@ export default function CartPage() {
 
   const [errors, setErrors] = useState({
     name: false,
+    badShowtimeIds: [] as number[],
   });
 
   const validate = (form: typeof formData) => {
     const formErrors = {
+      ...errors,
       name: false,
     };
     if (form.name.length < 2) {
@@ -51,7 +54,7 @@ export default function CartPage() {
   useEffect(() => {
     if (!isSubmitted) return;
 
-    // Make sure each value is false
+    // Make sure each value in errors is false
     if (
       Object.keys(errors).every((key) => !errors[key as keyof typeof errors])
     ) {

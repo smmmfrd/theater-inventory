@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -16,16 +17,61 @@ export const ticketOrderRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input: { name, orders }, ctx }) => {
-      await ctx.prisma.ticketOrder.createMany({
-        data: orders.map((order) => {
-          return {
-            ...order,
-            name,
-          };
-        }),
+      const badShowtimes: number[] = [];
+
+      const showtimeQueries = orders.map(
+        async (order) =>
+          await ctx.prisma.showtime.findFirst({
+            where: {
+              showtimeId: order.showtimeId,
+            },
+            select: {
+              maxSeats: true,
+              tickets: true,
+            },
+          })
+      );
+
+      const showtimes = await Promise.all(showtimeQueries);
+
+      const ticks = orders.map(async (order, index) => {
+        // Check if the order is still good.
+        const showtime = showtimes[index];
+
+        // Making typescript behave.
+        if (
+          showtime === null ||
+          showtime === undefined ||
+          showtime.maxSeats === undefined ||
+          showtime.tickets === undefined
+        ) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `${order.showtimeId}`,
+          });
+        }
+
+        const availableSeats =
+          showtime.maxSeats -
+          showtime.tickets.reduce((acc, { number }) => acc + number, 0);
+
+        // All the above work to get to this. Making sure the seats are still good.
+        if (availableSeats < order.number) {
+          badShowtimes.push(order.showtimeId);
+        } else {
+          // Actually create the order
+          await ctx.prisma.ticketOrder.create({
+            data: {
+              ...order,
+              name,
+            },
+          });
+        }
       });
 
-      return;
+      await Promise.all(ticks);
+
+      return badShowtimes;
     }),
   createManyOrders: publicProcedure
     .input(
@@ -39,6 +85,7 @@ export const ticketOrderRouter = createTRPCRouter({
         .array()
     )
     .mutation(async ({ input, ctx }) => {
+      // This route is only used by a cron job w/ no chance of over-booking. I hope.
       const orders = await ctx.prisma.ticketOrder.createMany({ data: input });
 
       return orders.count;
