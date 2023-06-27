@@ -4,7 +4,6 @@ import { dateFormatter } from "~/components/ShowtimeCard";
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { type TicketOrder } from "@prisma/client";
-import Image from "next/image";
 
 type SimpleMovie = {
   title: string;
@@ -111,44 +110,32 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           )
           .map((movie) => {
             return movie.showtimes.map((showtime) => (
-              <section key={showtime.showtimeId}>
-                <header className="flex justify-between gap-4 rounded bg-accent p-2">
-                  <button
-                    className="flex justify-between gap-1"
-                    title="Open showtime's order list."
-                    onClick={() =>
-                      setQueryKey(
-                        showtime.showtimeId === queryKey
-                          ? -1
-                          : showtime.showtimeId
-                      )
-                    }
-                  >
-                    <span>
-                      {movie.title} - {showtime.time}
-                    </span>
-                    <Image
-                      src="/bx-chevron-left-circle.svg"
-                      alt="Chevron Icon for opening this showtime's order list"
-                      width="24"
-                      height="24"
-                      className={`transition-transform ${
-                        showtime.showtimeId === queryKey
-                          ? "-rotate-90"
-                          : "rotate-0"
-                      }`}
-                    />
-                  </button>
-                </header>
+              <section
+                key={showtime.showtimeId}
+                className="collapse-arrow collapse"
+              >
+                <input
+                  type="checkbox"
+                  onChange={() =>
+                    setQueryKey(
+                      showtime.showtimeId === queryKey
+                        ? -1
+                        : showtime.showtimeId
+                    )
+                  }
+                />
 
-                {showtime.showtimeId === queryKey &&
-                  data?.orders !== undefined && (
-                    <ShowtimeData
-                      data={data}
-                      isLoading={isLoading}
-                      refetch={refetch}
-                    />
-                  )}
+                <h3 className="collapse-title">
+                  {movie.title} - {showtime.time}
+                </h3>
+
+                <div className="collapse-content">
+                  {isLoading && <div>loading</div>}
+                  {showtime.showtimeId === queryKey &&
+                    data?.orders !== undefined && (
+                      <ShowtimeData data={data} refetch={refetch} />
+                    )}
+                </div>
               </section>
             ));
           })}
@@ -163,11 +150,10 @@ type ShowtimeDataTypes = {
   data: {
     orders: TicketOrder[];
   };
-  isLoading: boolean;
   refetch: () => void;
 };
 
-const ShowtimeData = ({ data, isLoading, refetch }: ShowtimeDataTypes) => {
+const ShowtimeData = ({ data, refetch }: ShowtimeDataTypes) => {
   const [localData, setLocalData] = useState(data);
 
   const { mutate: localMutate } = api.ticketOrders.deleteOrder.useMutation({
@@ -186,37 +172,37 @@ const ShowtimeData = ({ data, isLoading, refetch }: ShowtimeDataTypes) => {
     localMutate({ ticketId });
   };
 
-  if (isLoading) {
-    return <div>loading</div>;
-  }
-
   return (
     <div className="flex flex-col gap-1 px-2 py-1">
-      {localData?.orders.map((order) => (
-        <div className="flex justify-between" key={order.ticketId}>
-          {order.name} - {order.number}
-          <button
-            className="btn-outline btn-xs btn-circle btn border-2"
-            title="Delete Order"
-            onClick={() => handleDelete(order.ticketId)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+      {localData.orders.length > 0 ? (
+        localData.orders.map((order) => (
+          <div className="flex justify-between" key={order.ticketId}>
+            {order.name} - {order.number}
+            <button
+              className="btn-outline btn-xs btn-circle btn border-2"
+              title="Delete Order"
+              onClick={() => handleDelete(order.ticketId)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="3"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-      ))}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3 w-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="3"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        ))
+      ) : (
+        <div>no orders here</div>
+      )}
     </div>
   );
 };
