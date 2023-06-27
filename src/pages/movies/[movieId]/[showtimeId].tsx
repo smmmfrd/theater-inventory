@@ -100,9 +100,7 @@ export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
 const ShowtimePage: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ safeShowtime, movie }: ShowtimePageProps) => {
-  const router = useRouter();
-  const { addTicket: addTickets } = useTicketStore();
-  const { data } = api.showtimes.getShowtime.useQuery({
+  const { data, isLoading } = api.showtimes.getShowtime.useQuery({
     showtimeId: safeShowtime.showtimeId,
   });
 
@@ -110,6 +108,67 @@ const ShowtimePage: NextPage<
   useEffect(() => {
     setTime(dateFormatter.format(new Date(safeShowtime.time)));
   }, [safeShowtime.time]);
+
+  const LogicDisplay = () => {
+    if (isLoading) {
+      return <div>loading</div>;
+    }
+
+    if (
+      data?.showtime.availableSeats !== undefined &&
+      data.showtime.availableSeats > 0
+    ) {
+      <ShowtimePageForm
+        availableSeats={data.showtime.availableSeats}
+        time={time}
+        movieTitle={movie.title}
+        showtimeId={safeShowtime.showtimeId}
+      />;
+    }
+
+    return (
+      <h3 className="text-center text-4xl font-bold underline">
+        This Showing is Sold Out!
+      </h3>
+    );
+  };
+
+  return (
+    <>
+      <MovieHero
+        movie={movie}
+        altTitle={`${time} showing for ${movie.title}`}
+      />
+      <section className="flex flex-col gap-8 px-8">
+        <LogicDisplay />
+
+        <Link
+          href={`/movies/${movie.movieId}`}
+          className="btn-primary btn mx-auto"
+        >
+          See other showtimes
+        </Link>
+      </section>
+    </>
+  );
+};
+
+type ShowtimePageFormProps = {
+  availableSeats: number;
+  time: string;
+  movieTitle: string;
+  showtimeId: number;
+};
+
+function ShowtimePageForm({
+  availableSeats,
+  time,
+  movieTitle,
+  showtimeId,
+}: ShowtimePageFormProps) {
+  const router = useRouter();
+
+  const { addTicket: addTickets } = useTicketStore();
 
   const [formData, setFormData] = useState({
     tickets: 1,
@@ -119,13 +178,8 @@ const ShowtimePage: NextPage<
     const { name, value } = e.currentTarget;
 
     let realValue = parseInt(value);
-
-    // Prevent hard overwriting (by inputing a number > available seating)
-    const availSeats = data?.showtime
-      ? data.showtime.availableSeats
-      : safeShowtime.availableSeats;
-    if (name === "tickets" && realValue > availSeats) {
-      realValue = availSeats;
+    if (name === "tickets" && realValue > availableSeats) {
+      realValue = availableSeats;
     }
 
     setFormData((prevForm) => ({
@@ -139,63 +193,34 @@ const ShowtimePage: NextPage<
     addTickets({
       number: formData.tickets,
       showtime: time,
-      movieTitle: movie.title,
-      showtimeId: safeShowtime.showtimeId,
+      movieTitle,
+      showtimeId,
     });
     void router.push("/cart");
   };
 
   return (
-    <>
-      <MovieHero
-        movie={movie}
-        altTitle={`${time} showing for ${movie.title}`}
-      />
-      <section className="flex flex-col gap-8 px-8">
-        {data?.showtime?.availableSeats &&
-        data?.showtime?.availableSeats > 0 ? (
-          <div className="mx-auto">
-            <h3 className=" mb-2 text-center text-lg">
-              <span className="font-bold underline">Order Tickets</span> - Only{" "}
-              {data?.showtime?.availableSeats} Seats Left!
-            </h3>
-            <form onSubmit={handleSubmit} className="join">
-              <input
-                type="number"
-                min="1"
-                max={
-                  data?.showtime
-                    ? data.showtime.availableSeats
-                    : safeShowtime.availableSeats
-                }
-                className="input-bordered input join-item"
-                name="tickets"
-                value={formData.tickets}
-                onChange={handleChange}
-              />
-              <button
-                className="btn-outline join-item btn text-base"
-                type="submit"
-              >
-                Add to Cart
-              </button>
-            </form>
-          </div>
-        ) : (
-          <h3 className="text-4xl font-bold underline">
-            This Showing is Sold Out!
-          </h3>
-        )}
-
-        <Link
-          href={`/movies/${movie.movieId}`}
-          className="btn-primary btn mx-auto"
-        >
-          See other showtimes
-        </Link>
-      </section>
-    </>
+    <div className="mx-auto">
+      <h3 className=" mb-2 text-center text-lg">
+        <span className="font-bold underline">Order Tickets</span> - Only{" "}
+        {availableSeats} Seats Left!
+      </h3>
+      <form onSubmit={handleSubmit} className="join">
+        <input
+          type="number"
+          min="1"
+          max={availableSeats}
+          className="input-bordered input join-item"
+          name="tickets"
+          value={formData.tickets}
+          onChange={handleChange}
+        />
+        <button className="btn-outline join-item btn text-base" type="submit">
+          Add to Cart
+        </button>
+      </form>
+    </div>
   );
-};
+}
 
 export default ShowtimePage;

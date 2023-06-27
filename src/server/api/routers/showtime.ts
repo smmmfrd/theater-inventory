@@ -43,7 +43,17 @@ export const showtimeRouter = createTRPCRouter({
         },
       });
 
-      if (queryShowtime === null) return {};
+      if (queryShowtime === null)
+        return {
+          showtime: {
+            showtimeId: 0,
+            time: new Date(),
+            maxSeats: 0,
+            theaterId: 0,
+            movieId: 0,
+            availableSeats: 0,
+          },
+        };
 
       const showtime = {
         showtimeId: queryShowtime.showtimeId,
