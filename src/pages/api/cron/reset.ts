@@ -151,7 +151,7 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
     process.env.RESET_LINK !== undefined &&
     !!process.env.VERCEL_URL
   ) {
-    void fetch(`${process.env.RESET_LINK}`);
+    await fetch(`${process.env.RESET_LINK}`);
     console.log("Called redeploy link");
   }
 
