@@ -5,11 +5,12 @@ import { api } from "~/utils/api";
 
 export default function CartPage() {
   const { cartTicketOrders, deleteOrder, clearOrders } = useTicketStore();
-  const { mutate, isSuccess } = api.ticketOrders.createOrder.useMutation({
-    onSuccess: () => {
-      clearOrders();
-    },
-  });
+  const { mutate, isLoading, isSuccess } =
+    api.ticketOrders.createOrder.useMutation({
+      onSuccess: () => {
+        clearOrders();
+      },
+    });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -132,27 +133,33 @@ export default function CartPage() {
             </table>
           </section>
           <section className="px-8">
-            <h3 className="mb-4 text-2xl font-bold">
-              &quot;Purchase&quot; Tickets
-            </h3>
+            {isLoading ? (
+              <div>loading</div>
+            ) : (
+              <>
+                <h3 className="mb-4 text-2xl font-bold">
+                  &quot;Purchase&quot; Tickets
+                </h3>
 
-            <form onSubmit={handleSubmit} className="join">
-              <input
-                type="text"
-                name="name"
-                className="input join-item"
-                placeholder="Name here..."
-                onChange={handleChange}
-              />
-              <button type="submit" className="btn-outline join-item btn">
-                Place Order
-              </button>
-            </form>
+                <form onSubmit={handleSubmit} className="join">
+                  <input
+                    type="text"
+                    name="name"
+                    className="input join-item"
+                    placeholder="Name here..."
+                    onChange={handleChange}
+                  />
+                  <button type="submit" className="btn-outline join-item btn">
+                    Place Order
+                  </button>
+                </form>
 
-            {errors.name && (
-              <p className="pl-4 text-sm text-error">
-                Please enter a valid name.
-              </p>
+                {errors.name && (
+                  <p className="pl-4 text-sm text-error">
+                    Please enter a valid name.
+                  </p>
+                )}
+              </>
             )}
           </section>
         </>
