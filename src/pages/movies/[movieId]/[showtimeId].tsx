@@ -121,6 +121,7 @@ const ShowtimePage: NextPage<
           time={time}
           movieTitle={movie.title}
           showtimeId={safeShowtime.showtimeId}
+          movieId={safeShowtime.movieId}
         />
       );
     }
@@ -157,6 +158,7 @@ type ShowtimePageFormProps = {
   time: string;
   movieTitle: string;
   showtimeId: number;
+  movieId: number;
 };
 
 function ShowtimePageForm({
@@ -164,6 +166,7 @@ function ShowtimePageForm({
   time,
   movieTitle,
   showtimeId,
+  movieId,
 }: ShowtimePageFormProps) {
   const router = useRouter();
 
@@ -194,6 +197,7 @@ function ShowtimePageForm({
       showtime: time,
       movieTitle,
       showtimeId,
+      movieId,
     });
     void router.push("/cart");
   };

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { type CartTicketOrder, useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
@@ -9,7 +10,7 @@ export default function CartPage() {
     api.ticketOrders.createOrder.useMutation({
       onSuccess: (data) => {
         setErrors((prev) => ({ ...prev, badShowtimeIds: data }));
-        clearOrders();
+        clearOrders(data);
       },
     });
 
@@ -42,6 +43,10 @@ export default function CartPage() {
     return formErrors;
   };
 
+  const noErrors = () => {
+    return errors.name === false && errors.badShowtimeIds.length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -55,9 +60,7 @@ export default function CartPage() {
     if (!isSubmitted) return;
 
     // Make sure each value in errors is false
-    if (
-      Object.keys(errors).every((key) => !errors[key as keyof typeof errors])
-    ) {
+    if (noErrors()) {
       mutate({
         name: formData.name,
         orders: cartTicketOrders.map((order) => ({
@@ -66,13 +69,32 @@ export default function CartPage() {
           showtimeId: order.showtimeId,
         })),
       });
+    } else {
+      // TODO - right proper fix here bucko
+      console.log("there's errors sicko.");
     }
     setIsSubmitted(false);
   }, [formData, errors, isSubmitted, cartTicketOrders, mutate]);
 
+  // When the user changes what page they're on, we need to clear the bad orders.
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleRouterChange = () => {
+      if (errors.badShowtimeIds.length > 0) {
+        clearOrders([]);
+      }
+    };
+    router.events.on("routeChangeStart", handleRouterChange);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouterChange);
+    };
+  }, [errors, router, clearOrders]);
+
   const TicketRow = (ticketOrder: CartTicketOrder) => (
     <tr
-      className="text-xl [&>*]:p-2.5"
+      className="text-xl [&>*]:py-2.5"
       key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
     >
       <td className="">{ticketOrder.number}</td>
@@ -100,6 +122,21 @@ export default function CartPage() {
           </svg>
         </button>
       </td>
+      {errors.badShowtimeIds.length > 0 && (
+        <td className="">
+          {errors.badShowtimeIds.find(
+            (id) => id === ticketOrder.showtimeId
+          ) && (
+            <Link
+              className="btn-error btn-square btn-xs flex items-center justify-center rounded-lg text-base-100"
+              title="Go back to this showtime"
+              href={`/movies/${ticketOrder.movieId}/${ticketOrder.showtimeId}`}
+            >
+              !
+            </Link>
+          )}
+        </td>
+      )}
     </tr>
   );
 
@@ -109,8 +146,10 @@ export default function CartPage() {
         <h2 className="mt-8 text-4xl font-bold underline">
           {`${
             isSuccess
-              ? "Your order was placed!"
-              : `Your Cart ${cartTicketOrders.length === 0 && "Is Empty!"}`
+              ? errors.badShowtimeIds.length > 0
+                ? "Your order was placed, but there were issues!"
+                : "Your order was placed!"
+              : `Your Cart ${cartTicketOrders.length > 0 ? "" : "Is Empty!"}`
           }`}
         </h2>
 
@@ -126,10 +165,11 @@ export default function CartPage() {
             <table className="mx-auto table border-separate text-right font-mono">
               <thead>
                 <tr className="text-lg text-neutral-focus [&>*]:pb-0 [&>*]:font-bold">
-                  <th>Tickets</th>
+                  <th>#</th>
                   <th>Movie</th>
                   <th>Showtime</th>
                   <th></th>
+                  {errors.badShowtimeIds.length > 0 && <th></th>}
                 </tr>
               </thead>
               <tbody className="">{cartTicketOrders.map(TicketRow)}</tbody>
@@ -138,7 +178,7 @@ export default function CartPage() {
           <section className="px-8">
             {isLoading ? (
               <div>loading</div>
-            ) : (
+            ) : errors.badShowtimeIds.length === 0 ? (
               <>
                 <h3 className="mb-4 text-2xl font-bold">
                   &quot;Purchase&quot; Tickets
@@ -162,6 +202,20 @@ export default function CartPage() {
                     Please enter a valid name.
                   </p>
                 )}
+              </>
+            ) : (
+              <>
+                <p>
+                  The number of available seats changed while your order was
+                  processing. All other orders were successful.
+                </p>
+                <p>
+                  Click the error to go back to the showtime or remove the order
+                  from your cart.
+                </p>
+                <p>
+                  If you leave this page all erroneous orders will be cleared.
+                </p>
               </>
             )}
           </section>

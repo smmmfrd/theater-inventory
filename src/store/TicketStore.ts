@@ -5,6 +5,7 @@ export type CartTicketOrder = {
   showtime: string;
   movieTitle: string;
   showtimeId: number;
+  movieId: number;
 };
 
 interface TicketState {
@@ -14,7 +15,7 @@ interface TicketState {
 interface TicketActions {
   addTicket: (newTicketOrder: CartTicketOrder) => void;
   deleteOrder: (showtimeId: number) => void;
-  clearOrders: () => void;
+  clearOrders: (except: number[]) => void;
 }
 
 export const useTicketStore = create<TicketState & TicketActions>((set) => ({
@@ -49,9 +50,11 @@ export const useTicketStore = create<TicketState & TicketActions>((set) => ({
       ),
     }));
   },
-  clearOrders: () => {
-    set(() => ({
-      cartTicketOrders: [],
+  clearOrders: (except: number[]) => {
+    set((state) => ({
+      cartTicketOrders: except.map(
+        (id) => state.cartTicketOrders.find((order) => order.showtimeId === id)!
+      ),
     }));
   },
 }));
