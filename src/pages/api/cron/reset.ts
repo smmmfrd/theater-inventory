@@ -152,6 +152,7 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
     !!process.env.VERCEL_URL
   ) {
     void fetch(`${process.env.RESET_LINK}`);
+    console.log("Called redeploy link");
   }
 
   console.log("Theater Reset.");
