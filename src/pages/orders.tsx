@@ -2,7 +2,7 @@ import { caller } from "~/server/api/root";
 import { api } from "~/utils/api";
 import { dateFormatter } from "~/components/ShowtimeCard";
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { type TicketOrder } from "@prisma/client";
 import Image from "next/image";
 
@@ -58,6 +58,13 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
     }
   }, [refetch, queryKey]);
 
+  const [selectedMovie, setSelectedMovie] = useState(0);
+
+  const handleRadioChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const input = parseInt(e.currentTarget.value);
+    setSelectedMovie(input);
+  };
+
   return (
     <>
       <header className="px-8">
@@ -65,20 +72,31 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
         <form className="collapse-plus collapse mt-4 bg-base-300">
           <input type="checkbox" />
-          <h3 className="collapse-title text-2xl">Select a movie</h3>
+          <h3 className="collapse-title text-2xl">Filter by movie</h3>
           <div className="collapse-content">
             <label className="label cursor-pointer">
               <span className="label-text">All</span>
-              <input type="radio" name="movie" className="radio" value={0} />
+              <input
+                type="radio"
+                name="movie"
+                className="radio"
+                value={0}
+                checked={selectedMovie === 0}
+                onChange={handleRadioChange}
+              />
             </label>
-            {movies.map((movie) => (
+            {movies.map(({ title, movieId, showtimes }) => (
               <label className="label cursor-pointer">
-                <span className="label-text">{movie.title}</span>
+                <span className="label-text">
+                  {title} - {showtimes.length}
+                </span>
                 <input
                   type="radio"
                   name="movie"
                   className="radio"
-                  value={movie.movieId}
+                  value={movieId}
+                  checked={selectedMovie === movieId}
+                  onChange={handleRadioChange}
                 />
               </label>
             ))}
@@ -87,43 +105,47 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </header>
 
       <div className="flex flex-wrap justify-center gap-2">
-        {movies.map((movie) => {
-          return movie.showtimes.map((showtime) => (
-            <section key={showtime.showtimeId}>
-              <header className="flex justify-between gap-4 rounded bg-accent p-2">
-                <span>
-                  {movie.title} - {showtime.time}
-                </span>
-                <button
-                  title="Open showtime's order list."
-                  onClick={() =>
-                    setQueryKey(
-                      showtime.showtimeId === queryKey
-                        ? -1
-                        : showtime.showtimeId
-                    )
-                  }
-                >
-                  <Image
-                    src="/bx-chevron-left-circle.svg"
-                    alt="Chevron Icon for opening this showtime's order list"
-                    width="24"
-                    height="24"
-                    className={`transition-transform ${
-                      showtime.showtimeId === queryKey
-                        ? "-rotate-90"
-                        : "rotate-0"
-                    }`}
-                  />
-                </button>
-              </header>
+        {movies
+          .filter((movie) =>
+            selectedMovie > 0 ? selectedMovie === movie.movieId : true
+          )
+          .map((movie) => {
+            return movie.showtimes.map((showtime) => (
+              <section key={showtime.showtimeId}>
+                <header className="flex justify-between gap-4 rounded bg-accent p-2">
+                  <span>
+                    {movie.title} - {showtime.time}
+                  </span>
+                  <button
+                    title="Open showtime's order list."
+                    onClick={() =>
+                      setQueryKey(
+                        showtime.showtimeId === queryKey
+                          ? -1
+                          : showtime.showtimeId
+                      )
+                    }
+                  >
+                    <Image
+                      src="/bx-chevron-left-circle.svg"
+                      alt="Chevron Icon for opening this showtime's order list"
+                      width="24"
+                      height="24"
+                      className={`transition-transform ${
+                        showtime.showtimeId === queryKey
+                          ? "-rotate-90"
+                          : "rotate-0"
+                      }`}
+                    />
+                  </button>
+                </header>
 
-              {showtime.showtimeId === queryKey && (
-                <ShowtimeData data={data} isLoading={isLoading} />
-              )}
-            </section>
-          ));
-        })}
+                {showtime.showtimeId === queryKey && (
+                  <ShowtimeData data={data} isLoading={isLoading} />
+                )}
+              </section>
+            ));
+          })}
       </div>
     </>
   );
