@@ -113,10 +113,8 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             return movie.showtimes.map((showtime) => (
               <section key={showtime.showtimeId}>
                 <header className="flex justify-between gap-4 rounded bg-accent p-2">
-                  <span>
-                    {movie.title} - {showtime.time}
-                  </span>
                   <button
+                    className="flex justify-between gap-1"
                     title="Open showtime's order list."
                     onClick={() =>
                       setQueryKey(
@@ -126,6 +124,9 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                       )
                     }
                   >
+                    <span>
+                      {movie.title} - {showtime.time}
+                    </span>
                     <Image
                       src="/bx-chevron-left-circle.svg"
                       alt="Chevron Icon for opening this showtime's order list"
@@ -140,9 +141,14 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                   </button>
                 </header>
 
-                {showtime.showtimeId === queryKey && (
-                  <ShowtimeData data={data} isLoading={isLoading} />
-                )}
+                {showtime.showtimeId === queryKey &&
+                  data?.orders !== undefined && (
+                    <ShowtimeData
+                      data={data}
+                      isLoading={isLoading}
+                      refetch={refetch}
+                    />
+                  )}
               </section>
             ));
           })}
@@ -154,24 +160,61 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 export default OrdersPage;
 
 type ShowtimeDataTypes = {
-  data:
-    | {
-        orders: TicketOrder[];
-      }
-    | undefined;
+  data: {
+    orders: TicketOrder[];
+  };
   isLoading: boolean;
+  refetch: () => void;
 };
 
-const ShowtimeData = ({ data, isLoading }: ShowtimeDataTypes) => {
+const ShowtimeData = ({ data, isLoading, refetch }: ShowtimeDataTypes) => {
+  const [localData, setLocalData] = useState(data);
+
+  const { mutate: localMutate } = api.ticketOrders.deleteOrder.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  const handleDelete = (ticketId: string) => {
+    if (localData?.orders === undefined) return;
+
+    setLocalData((prevData) => ({
+      orders: prevData?.orders.filter((order) => order.ticketId !== ticketId),
+    }));
+
+    localMutate({ ticketId });
+  };
+
   if (isLoading) {
     return <div>loading</div>;
   }
 
   return (
-    <div>
-      {data?.orders.map((order) => (
-        <div key={order.ticketId}>
+    <div className="flex flex-col gap-1 px-2 py-1">
+      {localData?.orders.map((order) => (
+        <div className="flex justify-between" key={order.ticketId}>
           {order.name} - {order.number}
+          <button
+            className="btn-outline btn-xs btn-circle btn border-2"
+            title="Delete Order"
+            onClick={() => handleDelete(order.ticketId)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3 w-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
       ))}
     </div>
