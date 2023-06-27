@@ -60,11 +60,33 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   return (
     <>
-      <header>
-        <h2>Ticket Orders</h2>
+      <header className="px-8">
+        <h2 className="mt-4 text-4xl font-bold">Ticket Orders</h2>
+
+        <form className="collapse-plus collapse mt-4 bg-base-300">
+          <input type="checkbox" />
+          <h3 className="collapse-title text-2xl">Select a movie</h3>
+          <div className="collapse-content">
+            <label className="label cursor-pointer">
+              <span className="label-text">All</span>
+              <input type="radio" name="movie" className="radio" value={0} />
+            </label>
+            {movies.map((movie) => (
+              <label className="label cursor-pointer">
+                <span className="label-text">{movie.title}</span>
+                <input
+                  type="radio"
+                  name="movie"
+                  className="radio"
+                  value={movie.movieId}
+                />
+              </label>
+            ))}
+          </div>
+        </form>
       </header>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
         {movies.map((movie) => {
           return movie.showtimes.map((showtime) => (
             <section key={showtime.showtimeId}>
