@@ -70,9 +70,9 @@ export default async function handler(
 ) {
   const { showtimes } = await caller.showtimes.getAllShowtimes();
 
-  const matineeShowtimes = sanitizeShowtime(showtimes, 10, 14);
-  const afternoonShowtimes = sanitizeShowtime(showtimes, 14, 18);
-  const lateNightShowtimes = sanitizeShowtime(showtimes, 18, 24);
+  const matineeShowtimes = sanitizeShowtime(showtimes, 12, 16);
+  const afternoonShowtimes = sanitizeShowtime(showtimes, 16, 20);
+  const lateNightShowtimes = sanitizeShowtime(showtimes, 20, 24);
 
   const sales = [
     CreateSales(matineeShowtimes, "Old Couple"),
