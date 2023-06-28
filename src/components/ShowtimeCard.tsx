@@ -78,7 +78,7 @@ export default function ShowtimeCard({
       <h4 className="mb-2 font-bold text-base-100 underline">Showtimes</h4>
       <div className="flex flex-wrap justify-center gap-2">
         {isLoading ? (
-          <div className="text-base-100">loading...</div>
+          <div className="loading loading-spinner loading-sm mx-auto text-base-100"></div>
         ) : (
           data?.showtimes.map((showtime) => (
             <ShowtimePiece showtime={showtime} key={showtime.showtimeId} />

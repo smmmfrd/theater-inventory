@@ -130,7 +130,9 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 </h3>
 
                 <div className="collapse-content">
-                  {isLoading && <div>loading</div>}
+                  {isLoading && (
+                    <div className="loading loading-spinner loading-xs mx-auto"></div>
+                  )}
                   {showtime.showtimeId === queryKey &&
                     data?.orders !== undefined && (
                       <ShowtimeData data={data} refetch={refetch} />

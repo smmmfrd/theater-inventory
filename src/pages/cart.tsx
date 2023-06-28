@@ -177,7 +177,7 @@ export default function CartPage() {
           </section>
           <section className="px-8">
             {isLoading ? (
-              <div>loading</div>
+              <div className="loading-xl loading loading-spinner mx-auto text-base-100"></div>
             ) : errors.badShowtimeIds.length === 0 ? (
               <>
                 <h3 className="mb-4 text-2xl font-bold">
