@@ -3,6 +3,10 @@ import { PrismaClient, type Movie } from "@prisma/client";
 import "dotenv/config";
 import moment from "moment-timezone";
 
+const START_HOUR = 12;
+const HOURS_BETWEEN = 3;
+const MINUTES_BETWEEN = 10;
+
 const prisma = new PrismaClient();
 
 type TMDBMovie = {
@@ -76,12 +80,10 @@ const getMovieIndex = (index: number, even: boolean) => {
 
 function makeShowtimes(startTime: moment.Moment) {
   const showtimes = [startTime];
-  // let newTime = addHours(startTime, 3);
-  let newTime = moment(startTime).add(3, "hours");
+  let newTime = moment(startTime).add(HOURS_BETWEEN, "hours");
   while (!newTime.isAfter(startTime, "day")) {
     showtimes.push(newTime);
-    // newTime = addHours(newTime, 3);
-    newTime = moment(newTime).add(3, "hours");
+    newTime = moment(newTime).add(HOURS_BETWEEN, "hours");
   }
 
   return showtimes;
@@ -91,8 +93,10 @@ function MakeTheaters(startTime: moment.Moment) {
   const theaters = Array(16)
     .fill(0)
     .map((_, index) => {
-      // const theaterStart = addMinutes(startTime, 15 * index);
-      const theaterStart = moment(startTime).add(15 * index, "minutes");
+      const theaterStart = moment(startTime).add(
+        MINUTES_BETWEEN * index,
+        "minutes"
+      );
       const showtimes = makeShowtimes(theaterStart);
 
       return {
@@ -111,7 +115,7 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
 
   // Create the start date
   const showDate = moment().tz("America/Los_Angeles").weekday(7).set({
-    hour: 10,
+    hour: START_HOUR,
     minute: 0,
     second: 0,
   });
