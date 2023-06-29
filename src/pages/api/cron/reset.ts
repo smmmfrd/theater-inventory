@@ -8,32 +8,50 @@ const HOURS_BETWEEN = 3;
 const MINUTES_BETWEEN = 10;
 
 interface MovieIndexMapType {
-  [key: number]: number[];
+  [key: string]: {
+    movieId: number[];
+    maxSeats: number;
+  };
 }
 // A map to find what movie goes to which theater.
+// Key = Theater number/id
+// movieId = Ranking of the movie being shown in that theater.
+// maxSeats = Number of seats in that theater
 const THEATER_TO_MOVIE: MovieIndexMapType = {
-  0: [0, 0],
-  1: [1, 1],
-  2: [0, 0],
-  3: [1, 1],
-  4: [0, 0],
-  5: [2, 2],
-  6: [0, 0],
-  7: [2, 2],
-  8: [0, 0],
-  9: [3, 3],
-  10: [0, 0],
-  11: [3, 3],
-  12: [0, 0],
-  13: [4, 5],
-  14: [1, 1],
-  15: [6, 7],
+  "0": { movieId: [0, 0], maxSeats: 128 },
+  "1": { movieId: [1, 1], maxSeats: 128 },
+  "2": { movieId: [0, 0], maxSeats: 80 },
+  "3": { movieId: [1, 1], maxSeats: 80 },
+  "4": { movieId: [0, 0], maxSeats: 64 },
+  "5": { movieId: [2, 2], maxSeats: 64 },
+  "6": { movieId: [0, 0], maxSeats: 64 },
+  "7": { movieId: [2, 2], maxSeats: 64 },
+  "8": { movieId: [0, 0], maxSeats: 64 },
+  "9": { movieId: [3, 3], maxSeats: 64 },
+  "10": { movieId: [0, 0], maxSeats: 64 },
+  "11": { movieId: [3, 3], maxSeats: 64 },
+  "12": { movieId: [0, 0], maxSeats: 40 },
+  "13": { movieId: [5, 4], maxSeats: 40 },
+  "14": { movieId: [1, 1], maxSeats: 40 },
+  "15": { movieId: [7, 6], maxSeats: 40 },
 };
 
-const getMovieIndex = (index: number, even: boolean): number => {
+const getMovieIndex = (
+  index: number,
+  even: boolean
+): { movieId: number; maxSeats: number } => {
   // Even just determines flickering between the bottom two movies
-  const movieIndex = THEATER_TO_MOVIE[index]![+even];
-  return movieIndex === undefined ? -1 : movieIndex;
+  const movieIndexData = THEATER_TO_MOVIE[`${index}`];
+  if (movieIndexData === undefined) {
+    return {
+      movieId: -1,
+      maxSeats: -1,
+    };
+  }
+  return {
+    movieId: movieIndexData.movieId[+even]!,
+    maxSeats: movieIndexData.maxSeats,
+  };
 };
 
 const prisma = new PrismaClient();
@@ -132,11 +150,28 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
 
   // Create the starting data
   const movieData = await getMovies();
-  const theaterData = MakeTheaters(showDate);
 
   if (movieData === undefined) {
+    console.log("Movie Fetch returned undefined");
+    // Yes I know it should be a different status & message, but vercel cron jobs are still in beta...
+    res.status(200).json({ message: "Success" });
     return;
   }
+  const theaterData = MakeTheaters(showDate);
+
+  const showtimes = theaterData
+    .map(({ showtimes, theaterId }) => {
+      return showtimes.map((showtime, index) => {
+        const { movieId, maxSeats } = getMovieIndex(theaterId, index % 2 == 0);
+        return {
+          time: showtime.toDate(),
+          maxSeats,
+          theaterId,
+          movieId,
+        };
+      });
+    })
+    .flat();
 
   // Push the basic data to prisma
   await prisma.movie.createMany({ data: [...movieData] });
@@ -146,17 +181,7 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
     })),
   });
   await prisma.showtime.createMany({
-    data: theaterData
-      .map(({ showtimes, theaterId }) => {
-        return showtimes.map((showtime, index) => ({
-          time: showtime.toDate(),
-          maxSeats: 64,
-          theaterId,
-          movieId:
-            movieData[getMovieIndex(theaterId, index % 2 == 0)]?.movieId || 0,
-        }));
-      })
-      .flat(),
+    data: showtimes,
   });
 
   // Trigger redeploy
