@@ -27,9 +27,10 @@ model Movie {
 }
 
 model Showtime {
-    showtimeId Int      @id @default(autoincrement())
-    time       DateTime
-    maxSeats   Int
+    showtimeId  Int      @id @default(autoincrement())
+    time        DateTime
+    maxSeats    Int
+    ticketPrice Int      @default(0)
 
     tickets TicketOrder[]
 

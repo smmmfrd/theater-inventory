@@ -36,6 +36,12 @@ const THEATER_TO_MOVIE: MovieIndexMapType = {
   "15": { movieId: [7, 6], maxSeats: 40 },
 };
 
+const TICKET_PRICES = {
+  matinee: 12,
+  afternoon: 16,
+  lateNight: 18,
+};
+
 const getMovieIndex = (
   index: number,
   even: boolean
@@ -52,6 +58,16 @@ const getMovieIndex = (
     movieId: movieIndexData.movieId[+even]!,
     maxSeats: movieIndexData.maxSeats,
   };
+};
+
+const getTicketPrice = (hour: number) => {
+  if (hour < 16) {
+    return TICKET_PRICES.matinee;
+  } else if (hour < 20) {
+    return TICKET_PRICES.afternoon;
+  } else {
+    return TICKET_PRICES.lateNight;
+  }
 };
 
 const prisma = new PrismaClient();
@@ -163,11 +179,13 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
     .map(({ showtimes, theaterId }) => {
       return showtimes.map((showtime, index) => {
         const { movieId, maxSeats } = getMovieIndex(theaterId, index % 2 == 0);
+        const ticketPrice = getTicketPrice(showtime.hour());
         return {
           time: showtime.toDate(),
           maxSeats,
           theaterId,
           movieId,
+          ticketPrice,
         };
       });
     })
