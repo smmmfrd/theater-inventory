@@ -184,6 +184,16 @@ export default function CartPage() {
                   &quot;Purchase&quot; Tickets
                 </h3>
 
+                <h4 className="flex justify-between text-lg font-semibold">
+                  Total -{" "}
+                  <span>
+                    {`${cartTicketOrders.reduce(
+                      (acc, order) => acc + order.number * order.ticketPrice,
+                      0
+                    )}$`}
+                  </span>
+                </h4>
+
                 <form onSubmit={handleSubmit} className="join">
                   <input
                     type="text"

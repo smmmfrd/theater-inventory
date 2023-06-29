@@ -1,3 +1,4 @@
+import { Showtime } from "@prisma/client";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -52,6 +53,7 @@ export const showtimeRouter = createTRPCRouter({
             theaterId: 0,
             movieId: 0,
             availableSeats: 0,
+            ticketPrice: 0,
           },
         };
 
@@ -61,6 +63,7 @@ export const showtimeRouter = createTRPCRouter({
         maxSeats: queryShowtime.maxSeats,
         theaterId: queryShowtime.theaterId,
         movieId: queryShowtime.movieId,
+        ticketPrice: queryShowtime.ticketPrice,
         availableSeats:
           queryShowtime.maxSeats -
           queryShowtime.tickets.reduce((acc, { number }) => acc + number, 0),

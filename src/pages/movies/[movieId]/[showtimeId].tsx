@@ -122,6 +122,7 @@ const ShowtimePage: NextPage<
           movieTitle={movie.title}
           showtimeId={safeShowtime.showtimeId}
           movieId={safeShowtime.movieId}
+          ticketPrice={data.showtime.ticketPrice}
         />
       );
     }
@@ -159,6 +160,7 @@ type ShowtimePageFormProps = {
   movieTitle: string;
   showtimeId: number;
   movieId: number;
+  ticketPrice: number;
 };
 
 function ShowtimePageForm({
@@ -167,6 +169,7 @@ function ShowtimePageForm({
   movieTitle,
   showtimeId,
   movieId,
+  ticketPrice,
 }: ShowtimePageFormProps) {
   const router = useRouter();
 
@@ -198,6 +201,7 @@ function ShowtimePageForm({
       movieTitle,
       showtimeId,
       movieId,
+      ticketPrice,
     });
     void router.push("/cart");
   };

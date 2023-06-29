@@ -6,6 +6,7 @@ export type CartTicketOrder = {
   movieTitle: string;
   showtimeId: number;
   movieId: number;
+  ticketPrice: number;
 };
 
 interface TicketState {
