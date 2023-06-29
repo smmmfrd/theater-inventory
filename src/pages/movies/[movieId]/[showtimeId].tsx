@@ -11,6 +11,7 @@ import type { ParsedUrlQuery } from "querystring";
 import React, { useEffect, useState } from "react";
 import MovieHero from "~/components/MovieHero";
 import { dateFormatter } from "~/components/ShowtimeCard";
+import { TICKET_PRICES } from "~/utils";
 import { caller } from "~/server/api/root";
 import { useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
@@ -41,11 +42,13 @@ type SafeShowtime = {
   theaterId: number;
   showtimeId: number;
   movieId: number;
+  ticketPrice: number;
 };
 
 type ShowtimePageProps = {
   safeShowtime: SafeShowtime;
   movie: Movie;
+  showtimeType: string;
 };
 
 export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
@@ -71,6 +74,7 @@ export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
           theaterId: 0,
           showtimeId: 0,
           movieId: 0,
+          ticketPrice: 0,
         },
         movie: {
           movieId: 0,
@@ -80,6 +84,7 @@ export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
           posterImage: "",
           backdropImage: "",
         },
+        showtimeType: "",
       },
     };
   } else {
@@ -88,10 +93,18 @@ export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
       time: showtime.time.toString(),
     };
 
+    const showtimeType =
+      Object.keys(TICKET_PRICES).find(
+        (key) =>
+          TICKET_PRICES[key as keyof typeof TICKET_PRICES] ===
+          showtime.ticketPrice
+      ) || "";
+
     return {
       props: {
         safeShowtime,
         movie,
+        showtimeType,
       },
     };
   }
@@ -99,7 +112,7 @@ export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
 
 const ShowtimePage: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ safeShowtime, movie }: ShowtimePageProps) => {
+> = ({ safeShowtime, movie, showtimeType }: ShowtimePageProps) => {
   const { data, isLoading } = api.showtimes.getShowtime.useQuery({
     showtimeId: safeShowtime.showtimeId,
   });
@@ -122,7 +135,8 @@ const ShowtimePage: NextPage<
           movieTitle={movie.title}
           showtimeId={safeShowtime.showtimeId}
           movieId={safeShowtime.movieId}
-          ticketPrice={data.showtime.ticketPrice}
+          ticketPrice={safeShowtime.ticketPrice}
+          showtimeType={showtimeType}
         />
       );
     }
@@ -161,6 +175,7 @@ type ShowtimePageFormProps = {
   showtimeId: number;
   movieId: number;
   ticketPrice: number;
+  showtimeType: string;
 };
 
 function ShowtimePageForm({
@@ -170,6 +185,7 @@ function ShowtimePageForm({
   showtimeId,
   movieId,
   ticketPrice,
+  showtimeType,
 }: ShowtimePageFormProps) {
   const router = useRouter();
 
@@ -206,13 +222,26 @@ function ShowtimePageForm({
     void router.push("/cart");
   };
 
+  const showtimeTypeToStyle = () => {
+    switch (showtimeType) {
+      case "matinee":
+        return "bg-info text-info-content";
+      case "afternoon":
+        return "bg-success text-success-content";
+      case "lateNight":
+        return "bg-error text-error-content";
+    }
+  };
+
   return (
     <div className="mx-auto">
       <p className="mb-6 mt-2 text-center text-lg">
-        <span className="mr-4 rounded-xl bg-info px-3 py-4 text-2xl text-info-content">
-          Matinee
+        <span
+          className={`mr-4 rounded-xl px-3 py-4 text-2xl capitalize ${showtimeTypeToStyle()}`}
+        >
+          {showtimeType.split(/(?=[A-Z])/).join(" ")}
         </span>
-        <span className="font-thin italic">( 12$ each )</span>
+        <span className="font-thin italic">( {ticketPrice}$ each )</span>
       </p>
 
       <h3 className="mb-2 text-center text-lg">

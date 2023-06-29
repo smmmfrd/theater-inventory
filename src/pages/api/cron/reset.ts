@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient, type Movie } from "@prisma/client";
 import "dotenv/config";
 import moment from "moment-timezone";
+import { TICKET_PRICES } from "~/utils";
 
 const START_HOUR = 12;
 const HOURS_BETWEEN = 3;
@@ -36,12 +37,6 @@ const THEATER_TO_MOVIE: MovieIndexMapType = {
   "13": { movieRank: [5, 4], maxSeats: 40 },
   "14": { movieRank: [1, 1], maxSeats: 40 },
   "15": { movieRank: [7, 6], maxSeats: 40 },
-};
-
-const TICKET_PRICES = {
-  matinee: 12,
-  afternoon: 16,
-  lateNight: 18,
 };
 
 const getMovieIndex = (
