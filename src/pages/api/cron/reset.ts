@@ -7,33 +7,35 @@ const START_HOUR = 12;
 const HOURS_BETWEEN = 3;
 const MINUTES_BETWEEN = 10;
 
+type TheaterData = {
+  movieRank: number[];
+  maxSeats: number;
+};
+
 interface MovieIndexMapType {
-  [key: string]: {
-    movieId: number[];
-    maxSeats: number;
-  };
+  [key: string]: TheaterData;
 }
 // A map to find what movie goes to which theater.
 // Key = Theater number/id
-// movieId = Ranking of the movie being shown in that theater.
+// movieRank = Ranking/index of the movie being shown in that theater
 // maxSeats = Number of seats in that theater
 const THEATER_TO_MOVIE: MovieIndexMapType = {
-  "0": { movieId: [0, 0], maxSeats: 128 },
-  "1": { movieId: [1, 1], maxSeats: 128 },
-  "2": { movieId: [0, 0], maxSeats: 80 },
-  "3": { movieId: [1, 1], maxSeats: 80 },
-  "4": { movieId: [0, 0], maxSeats: 64 },
-  "5": { movieId: [2, 2], maxSeats: 64 },
-  "6": { movieId: [0, 0], maxSeats: 64 },
-  "7": { movieId: [2, 2], maxSeats: 64 },
-  "8": { movieId: [0, 0], maxSeats: 64 },
-  "9": { movieId: [3, 3], maxSeats: 64 },
-  "10": { movieId: [0, 0], maxSeats: 64 },
-  "11": { movieId: [3, 3], maxSeats: 64 },
-  "12": { movieId: [0, 0], maxSeats: 40 },
-  "13": { movieId: [5, 4], maxSeats: 40 },
-  "14": { movieId: [1, 1], maxSeats: 40 },
-  "15": { movieId: [7, 6], maxSeats: 40 },
+  "0": { movieRank: [0, 0], maxSeats: 128 },
+  "1": { movieRank: [1, 1], maxSeats: 128 },
+  "2": { movieRank: [0, 0], maxSeats: 80 },
+  "3": { movieRank: [1, 1], maxSeats: 80 },
+  "4": { movieRank: [0, 0], maxSeats: 64 },
+  "5": { movieRank: [2, 2], maxSeats: 64 },
+  "6": { movieRank: [0, 0], maxSeats: 64 },
+  "7": { movieRank: [2, 2], maxSeats: 64 },
+  "8": { movieRank: [0, 0], maxSeats: 64 },
+  "9": { movieRank: [3, 3], maxSeats: 64 },
+  "10": { movieRank: [0, 0], maxSeats: 64 },
+  "11": { movieRank: [3, 3], maxSeats: 64 },
+  "12": { movieRank: [0, 0], maxSeats: 40 },
+  "13": { movieRank: [5, 4], maxSeats: 40 },
+  "14": { movieRank: [1, 1], maxSeats: 40 },
+  "15": { movieRank: [7, 6], maxSeats: 40 },
 };
 
 const TICKET_PRICES = {
@@ -45,17 +47,17 @@ const TICKET_PRICES = {
 const getMovieIndex = (
   index: number,
   even: boolean
-): { movieId: number; maxSeats: number } => {
+): { movieRank: number; maxSeats: number } => {
   // Even just determines flickering between the bottom two movies
   const movieIndexData = THEATER_TO_MOVIE[`${index}`];
   if (movieIndexData === undefined) {
     return {
-      movieId: -1,
+      movieRank: -1,
       maxSeats: -1,
     };
   }
   return {
-    movieId: movieIndexData.movieId[+even]!,
+    movieRank: movieIndexData.movieRank[+even]!,
     maxSeats: movieIndexData.maxSeats,
   };
 };
@@ -178,13 +180,16 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
   const showtimes = theaterData
     .map(({ showtimes, theaterId }) => {
       return showtimes.map((showtime, index) => {
-        const { movieId, maxSeats } = getMovieIndex(theaterId, index % 2 == 0);
+        const { movieRank, maxSeats } = getMovieIndex(
+          theaterId,
+          index % 2 == 0
+        );
         const ticketPrice = getTicketPrice(showtime.hour());
         return {
           time: showtime.toDate(),
           maxSeats,
           theaterId,
-          movieId,
+          movieId: movieData[movieRank]?.movieId || 0,
           ticketPrice,
         };
       });
@@ -217,6 +222,70 @@ export default async function reset(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json({ message: "Success" });
 }
 
+async function devReset() {
+  // Clear out all old data
+  await prisma.movie.deleteMany();
+  await prisma.theater.deleteMany();
+
+  // Create the start date
+  const showDate = moment().tz("America/Los_Angeles").weekday(7).set({
+    hour: START_HOUR,
+    minute: 0,
+    second: 0,
+  });
+
+  // Create the starting data
+  const movieData = await getMovies();
+
+  if (movieData === undefined) {
+    console.log("Movie Fetch returned undefined");
+    return;
+  }
+  const theaterData = MakeTheaters(showDate);
+
+  const showtimes = theaterData
+    .map(({ showtimes, theaterId }) => {
+      return showtimes.map((showtime, index) => {
+        const { movieRank, maxSeats } = getMovieIndex(
+          theaterId,
+          index % 2 == 0
+        );
+        const ticketPrice = getTicketPrice(showtime.hour());
+        return {
+          time: showtime.toDate(),
+          maxSeats,
+          theaterId,
+          movieId: movieData[movieRank]?.movieId || 0,
+          ticketPrice,
+        };
+      });
+    })
+    .flat();
+
+  // Push the basic data to prisma
+  await prisma.movie.createMany({ data: [...movieData] });
+  await prisma.theater.createMany({
+    data: theaterData.map((theater) => ({
+      theaterId: theater.theaterId,
+    })),
+  });
+  await prisma.showtime.createMany({
+    data: showtimes,
+  });
+
+  // Trigger redeploy
+  if (
+    process.env.RESET_LINK !== null &&
+    process.env.RESET_LINK !== undefined &&
+    !!process.env.VERCEL_URL
+  ) {
+    await fetch(`${process.env.RESET_LINK}`);
+    console.log("Called redeploy link");
+  }
+
+  console.log("Dev Theater Reset.");
+}
+
 if (!process.env.VERCEL_URL) {
-  // void reset();
+  void devReset();
 }
