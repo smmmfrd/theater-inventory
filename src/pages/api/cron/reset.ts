@@ -7,6 +7,35 @@ const START_HOUR = 12;
 const HOURS_BETWEEN = 3;
 const MINUTES_BETWEEN = 10;
 
+interface MovieIndexMapType {
+  [key: number]: number[];
+}
+// A map to find what movie goes to which theater.
+const THEATER_TO_MOVIE: MovieIndexMapType = {
+  0: [0, 0],
+  1: [1, 1],
+  2: [0, 0],
+  3: [1, 1],
+  4: [0, 0],
+  5: [2, 2],
+  6: [0, 0],
+  7: [2, 2],
+  8: [0, 0],
+  9: [3, 3],
+  10: [0, 0],
+  11: [3, 3],
+  12: [0, 0],
+  13: [4, 5],
+  14: [1, 1],
+  15: [6, 7],
+};
+
+const getMovieIndex = (index: number, even: boolean): number => {
+  // Even just determines flickering between the bottom two movies
+  const movieIndex = THEATER_TO_MOVIE[index]![+even];
+  return movieIndex === undefined ? -1 : movieIndex;
+};
+
 const prisma = new PrismaClient();
 
 type TMDBMovie = {
@@ -58,25 +87,6 @@ async function getMovies() {
 
   return movies;
 }
-
-const getMovieIndex = (index: number, even: boolean) => {
-  // Even just determines flickering between the bottom two movies
-  if (index % 2 == 0) {
-    return 0;
-  } else {
-    if (index < 4) {
-      return 1;
-    } else if (index < 8) {
-      return 2;
-    } else if (index < 12) {
-      return 3;
-    } else if (index < 14) {
-      return even ? 4 : 5;
-    } else {
-      return even ? 6 : 7;
-    }
-  }
-};
 
 function makeShowtimes(startTime: moment.Moment) {
   const showtimes = [startTime];
