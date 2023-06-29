@@ -184,34 +184,38 @@ export default function CartPage() {
                   &quot;Purchase&quot; Tickets
                 </h3>
 
-                <h4 className="flex justify-between text-lg font-semibold">
-                  Total -{" "}
-                  <span>
-                    {`${cartTicketOrders.reduce(
-                      (acc, order) => acc + order.number * order.ticketPrice,
-                      0
-                    )}$`}
-                  </span>
-                </h4>
+                <div className="divider"></div>
 
-                <form onSubmit={handleSubmit} className="join">
-                  <input
-                    type="text"
-                    name="name"
-                    className="input join-item"
-                    placeholder="Name here..."
-                    onChange={handleChange}
-                  />
-                  <button type="submit" className="btn-outline join-item btn">
-                    Place Order
-                  </button>
-                </form>
+                <section>
+                  <h4 className="mb-2 flex justify-between px-4 text-xl font-semibold italic">
+                    Total -{" "}
+                    <span>
+                      {`${cartTicketOrders.reduce(
+                        (acc, order) => acc + order.number * order.ticketPrice,
+                        0
+                      )}$`}
+                    </span>
+                  </h4>
 
-                {errors.name && (
-                  <p className="pl-4 text-sm text-error">
-                    Please enter a valid name.
-                  </p>
-                )}
+                  <form onSubmit={handleSubmit} className="join">
+                    <input
+                      type="text"
+                      name="name"
+                      className="input join-item"
+                      placeholder="Name here..."
+                      onChange={handleChange}
+                    />
+                    <button type="submit" className="btn-outline join-item btn">
+                      Place Order
+                    </button>
+                  </form>
+
+                  {errors.name && (
+                    <p className="pl-4 text-sm text-error">
+                      Please enter a valid name.
+                    </p>
+                  )}
+                </section>
               </>
             ) : (
               <>
