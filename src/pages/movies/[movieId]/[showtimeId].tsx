@@ -208,10 +208,18 @@ function ShowtimePageForm({
 
   return (
     <div className="mx-auto">
-      <h3 className=" mb-2 text-center text-lg">
+      <p className="mb-6 mt-2 text-center text-lg">
+        <span className="mr-4 rounded-xl bg-info px-3 py-4 text-2xl text-info-content">
+          Matinee
+        </span>
+        <span className="font-thin italic">( 12$ each )</span>
+      </p>
+
+      <h3 className="mb-2 text-center text-lg">
         <span className="font-bold underline">Order Tickets</span> - Only{" "}
         {availableSeats} Seats Left!
       </h3>
+
       <form onSubmit={handleSubmit} className="join">
         <input
           type="number"
