@@ -5,20 +5,25 @@ import React from "react";
 type MovieHeroProps = {
   movie: Movie;
   altTitle?: string;
+  children?: React.ReactNode;
 };
 
-export default function MovieHero({ movie, altTitle = "" }: MovieHeroProps) {
+export default function MovieHero({
+  movie,
+  altTitle = "",
+  children,
+}: MovieHeroProps) {
   return (
-    <header className="relative">
-      <div
-        style={
-          {
-            "--image-url": `url(${movie.backdropImage})`,
-          } as React.CSSProperties
-        }
-        className="h-72 w-full max-w-7xl bg-gray-500 bg-[image:var(--image-url)] bg-cover bg-center bg-no-repeat bg-blend-multiply"
-      ></div>
-      <figure className="">
+    <>
+      <header className="relative">
+        <div
+          style={
+            {
+              "--image-url": `url(${movie.backdropImage})`,
+            } as React.CSSProperties
+          }
+          className="h-72 w-full max-w-7xl bg-gray-600 bg-[image:var(--image-url)] bg-cover bg-center bg-no-repeat bg-blend-multiply"
+        ></div>
         <Image
           className="absolute left-8 top-8 h-[288px] rounded"
           src={movie.posterImage}
@@ -26,13 +31,16 @@ export default function MovieHero({ movie, altTitle = "" }: MovieHeroProps) {
           height={288}
           alt={`Poster for ${movie.title}`}
         />
-        <figcaption className="mt-20 px-8">
-          <h2 className="text-3xl font-bold">
+      </header>
+      <section className="lg:flex">
+        <div className="mb-4 mt-10 lg:w-96 lg:flex-none">
+          <h2 className="px-8 text-3xl font-bold">
             {altTitle.length > 0 ? altTitle : `${movie.title} at Fake Theater`}
           </h2>
-          <p>{movie.description}</p>
-        </figcaption>
-      </figure>
-    </header>
+          <p className="px-8">{movie.description}</p>
+        </div>
+        {children}
+      </section>
+    </>
   );
 }
