@@ -1,7 +1,12 @@
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+
 export default function MovieHomePage() {
-  return (
-    <div>
-      <h2>List of Movies</h2>
-    </div>
-  );
+  const { push } = useRouter();
+
+  useEffect(() => {
+    push("/");
+  }, []);
+
+  return <div></div>;
 }
