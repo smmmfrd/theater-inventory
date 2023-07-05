@@ -32,8 +32,9 @@ export default function MovieHero({
           alt={`Poster for ${movie.title}`}
         />
       </header>
-      <section className="lg:flex">
-        <div className="mb-4 mt-10 lg:w-96 lg:flex-none">
+
+      <section className="md:flex md:items-stretch">
+        <div className="mb-4 mt-10 md:w-96 md:flex-none">
           <h2 className="px-8 text-3xl font-bold">
             {altTitle.length > 0 ? altTitle : `${movie.title} at Fake Theater`}
           </h2>

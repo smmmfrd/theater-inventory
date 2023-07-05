@@ -150,20 +150,16 @@ const ShowtimePage: NextPage<
 
   return (
     <>
-      <MovieHero
-        movie={movie}
-        altTitle={`${time} showing for ${movie.title}`}
-      />
-      <section className="flex flex-col gap-8 px-8">
+      <MovieHero movie={movie} altTitle={`${time} showing for ${movie.title}`}>
         <DisplayForm />
+      </MovieHero>
 
-        <Link
-          href={`/movies/${movie.movieId}`}
-          className="btn-primary btn mx-auto"
-        >
-          See other showtimes
-        </Link>
-      </section>
+      <Link
+        href={`/movies/${movie.movieId}`}
+        className="btn-primary btn mx-auto mb-4 mt-12 md:mt-4"
+      >
+        See other showtimes
+      </Link>
     </>
   );
 };
@@ -234,8 +230,9 @@ function ShowtimePageForm({
   };
 
   return (
-    <div className="mx-auto">
-      <p className="mb-6 mt-2 text-center text-lg">
+    <div className="mx-auto flex flex-col items-center md:justify-evenly">
+      {/* PRICING INFO */}
+      <p className="mb-6 mt-2 text-center text-lg md:m-0">
         <span
           className={`mr-4 rounded-xl px-3 py-4 text-2xl capitalize ${showtimeTypeToStyle()}`}
         >
@@ -244,17 +241,19 @@ function ShowtimePageForm({
         <span className="font-thin italic">( {ticketPrice}$ each )</span>
       </p>
 
-      <h3 className="mb-2 text-center text-lg">
+      {/* HERO & TICKET AMOUNT */}
+      <h3 className="mb-2 text-center text-lg md:m-0">
         <span className="font-bold underline">Order Tickets</span> - Only{" "}
         {availableSeats} Seats Left!
       </h3>
 
+      {/* FORM */}
       <form onSubmit={handleSubmit} className="join">
         <input
           type="number"
           min="1"
           max={availableSeats}
-          className="input-bordered input join-item"
+          className="input-bordered input join-item w-28 text-xl"
           name="tickets"
           value={formData.tickets}
           onChange={handleChange}
