@@ -57,21 +57,28 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
     }
   }, [refetch, queryKey]);
 
-  const [selectedMovie, setSelectedMovie] = useState(0);
-
-  const handleRadioChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const input = parseInt(e.currentTarget.value);
-    setSelectedMovie(input);
-  };
+  const [selectedMovie, setSelectedMovie] = useState({
+    id: 0,
+    title: "",
+  });
 
   return (
     <>
       <header className="px-8">
         <h2 className="mt-4 text-4xl font-bold">Ticket Orders</h2>
+        <p>
+          View and Delete any orders here. To find the showtime you are looking
+          for faster, use below to filter by the movie.
+        </p>
 
+        <h3 className="-mb-4 mt-8 text-2xl">Filter by movie</h3>
         <form className="collapse-plus collapse mt-4 bg-base-300">
           <input type="checkbox" />
-          <h3 className="collapse-title text-2xl">Filter by movie</h3>
+          <h4 className="collapse-title truncate font-mono text-lg">
+            {selectedMovie.id > 0
+              ? `(${selectedMovie.title})`
+              : "Pick a movie..."}
+          </h4>
           <div className="collapse-content">
             <label className="label cursor-pointer">
               <span className="label-text">All</span>
@@ -80,12 +87,12 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 name="movie"
                 className="radio"
                 value={0}
-                checked={selectedMovie === 0}
-                onChange={handleRadioChange}
+                checked={selectedMovie.id === 0}
+                onChange={() => setSelectedMovie({ id: 0, title: "" })}
               />
             </label>
             {movies.map(({ title, movieId, showtimes }) => (
-              <label className="label cursor-pointer">
+              <label key={movieId} className="label cursor-pointer">
                 <span className="label-text">
                   {title} - {showtimes.length}
                 </span>
@@ -94,8 +101,8 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                   name="movie"
                   className="radio"
                   value={movieId}
-                  checked={selectedMovie === movieId}
-                  onChange={handleRadioChange}
+                  checked={selectedMovie.id === movieId}
+                  onChange={() => setSelectedMovie({ id: movieId, title })}
                 />
               </label>
             ))}
@@ -106,7 +113,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <div className="flex flex-wrap justify-center gap-2">
         {movies
           .filter((movie) =>
-            selectedMovie > 0 ? selectedMovie === movie.movieId : true
+            selectedMovie.id > 0 ? selectedMovie.id === movie.movieId : true
           )
           .map((movie) => {
             return movie.showtimes.map((showtime) => (
