@@ -217,6 +217,7 @@ function ShowtimePageForm({
       movieId,
       ticketPrice,
       showtimeType,
+      availableSeats,
     });
     void router.push("/cart");
   };

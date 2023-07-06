@@ -8,6 +8,7 @@ export type CartTicketOrder = {
   movieId: number;
   ticketPrice: number;
   showtimeType: string;
+  availableSeats: number;
 };
 
 interface TicketState {
@@ -16,6 +17,7 @@ interface TicketState {
 
 interface TicketActions {
   addTicket: (newTicketOrder: CartTicketOrder) => void;
+  updateOrder: (showtimeId: number, newNumber: number) => void;
   deleteOrder: (showtimeId: number) => void;
   clearOrders: (except: number[]) => void;
 }
@@ -45,6 +47,23 @@ export const useTicketStore = create<TicketState & TicketActions>((set) => ({
         cartTicketOrders: [...state.cartTicketOrders, newTicketOrder],
       };
     }),
+  updateOrder: (showtimeId, newNumber) => {
+    set((state) => {
+      const toUpdateIndex = state.cartTicketOrders.findIndex(
+        (order) => order.showtimeId === showtimeId
+      );
+      return {
+        cartTicketOrders: state.cartTicketOrders.map((order) =>
+          order.showtimeId === showtimeId
+            ? {
+                ...order,
+                number: newNumber,
+              }
+            : order
+        ),
+      };
+    });
+  },
   deleteOrder: (showtimeId) => {
     set((state) => ({
       cartTicketOrders: state.cartTicketOrders.filter(

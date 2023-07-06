@@ -2,11 +2,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { type CartTicketOrder, useTicketStore } from "~/store/TicketStore";
-import { TICKET_PRICES } from "~/utils";
 import { api } from "~/utils/api";
 
 export default function CartPage() {
-  const { cartTicketOrders, deleteOrder, clearOrders } = useTicketStore();
+  const { cartTicketOrders, deleteOrder, clearOrders, updateOrder } =
+    useTicketStore();
+
   const { mutate, isLoading, isSuccess } =
     api.ticketOrders.createOrder.useMutation({
       onSuccess: (data) => {
@@ -98,12 +99,31 @@ export default function CartPage() {
       className="text-xl [&>*]:py-2.5"
       key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
     >
-      <td className="">{ticketOrder.number}</td>
-      <td>{ticketOrder.movieTitle}</td>
-      <td>{ticketOrder.showtime}</td>
+      <td className="px-0">
+        <input
+          type="number"
+          value={ticketOrder.number}
+          onChange={(e: React.FormEvent<HTMLInputElement>) =>
+            updateOrder(ticketOrder.showtimeId, parseInt(e.currentTarget.value))
+          }
+          className="input w-20"
+          min={1}
+          max={ticketOrder.availableSeats}
+        />
+      </td>
+      <td>
+        <Link href={`/movies/${ticketOrder.movieId}`}>
+          {ticketOrder.movieTitle}
+        </Link>
+      </td>
+      <td>
+        <Link href={`/movies/${ticketOrder.movieId}/${ticketOrder.showtimeId}`}>
+          {ticketOrder.showtime}
+        </Link>
+      </td>
       <td className="relative">
         <button
-          className="btn-outline btn-xs btn-circle btn absolute left-0 top-3 border-2"
+          className="btn-outline btn-xs btn-circle btn absolute left-2 top-[22px] border-2"
           title="Delete Order"
           onClick={() => deleteOrder(ticketOrder.showtimeId)}
         >
