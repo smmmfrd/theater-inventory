@@ -19,49 +19,45 @@ export default function AboutPage() {
           time.
         </p>
         <p>
-          <Link
-            className="link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://github.com/smmmfrd/theater-inventory"
-          >
-            Link to the repository...
-          </Link>
+          <NewTabLink
+            link="https://github.com/smmmfrd/theater-inventory"
+            text="Link to the repository..."
+          />
         </p>
         <p>
           Site deploys through{" "}
-          <Link
-            className="link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://vercel.com/"
-          >
-            Vercel
-          </Link>{" "}
-          and was scaffolded with the{" "}
-          <Link
-            className="link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://create.t3.gg/"
-          >
-            T3 stack.
-          </Link>
+          <NewTabLink link="https://vercel.com/" text="Vercel" /> and was
+          scaffolded with the{" "}
+          <NewTabLink link="https://create.t3.gg/" text="T3 stack" />.
         </p>
         <p>
           Automated random orders and a weekly reset are done through{" "}
-          <Link
-            className="link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://vercel.com/docs/cron-jobs"
-          >
-            cron jobs on Vercel.
-          </Link>{" "}
-          Every night each showtime gets a random number of tickets ordered for
-          it, from 2 to (currently) 15% of the maximum number of seats left.
+          <NewTabLink
+            link="https://vercel.com/docs/cron-jobs"
+            text="cron jobs on Vercel"
+          />
+          . Every night each showtime gets a random number of tickets ordered
+          for it, from 2 to (currently) 15% of the maximum number of seats left.
         </p>
       </section>
     </>
+  );
+}
+
+type NewTabLinkProps = {
+  link: string;
+  text: string;
+};
+
+function NewTabLink({ link, text }: NewTabLinkProps) {
+  return (
+    <Link
+      className="link"
+      target="_blank"
+      rel="noopener noreferrer"
+      href={link}
+    >
+      {text}
+    </Link>
   );
 }
