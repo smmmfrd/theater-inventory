@@ -178,7 +178,7 @@ export default function CartPage() {
             </table>
           </section>
 
-          <section className="px-8">
+          <section className="mx-auto w-full max-w-2xl px-8">
             {isLoading ? (
               <div className="loading-xl loading loading-spinner mx-auto text-base-100"></div>
             ) : errors.badShowtimeIds.length === 0 ? (
