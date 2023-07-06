@@ -17,7 +17,7 @@ export default function MovieCard({
 }: MovieCardType) {
   return (
     <section className="relative mx-8 flex max-w-3xl flex-col gap-4 rounded bg-neutral p-8 sm:flex-row sm:pr-4 md:mx-auto">
-      <header className="sticky top-16 mx-auto h-min max-w-[208px] flex-none text-base-100">
+      <header className="top-16 mx-auto h-min max-w-[208px] flex-none text-base-100 sm:sticky">
         <Link href={`movies/${movieId}`}>
           <Image
             className="mx-auto mb-1"
