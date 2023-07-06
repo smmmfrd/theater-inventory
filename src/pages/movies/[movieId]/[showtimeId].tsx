@@ -124,7 +124,9 @@ const ShowtimePage: NextPage<
 
   const DisplayForm = () => {
     if (isLoading) {
-      return <div className="loading loading-spinner loading-lg mx-auto"></div>;
+      return (
+        <div className="loading loading-spinner loading-lg mx-auto block"></div>
+      );
     }
 
     if (data?.showtime && data.showtime.availableSeats > 0) {

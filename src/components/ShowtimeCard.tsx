@@ -53,7 +53,8 @@ function ShowtimePiece({ showtime }: ShowtimePieceProps) {
       href={`/movies/${showtime.movieId}/${showtime.showtimeId}`}
       className="btn-accent btn relative h-10 w-24 overflow-hidden rounded p-0 text-base font-bold text-base-100"
       title={`This showing is ${Math.round(
-        (showtime.availableSeats / showtime.maxSeats) * 100
+        ((showtime.maxSeats - showtime.availableSeats) / showtime.maxSeats) *
+          100
       )}% full`}
     >
       {dateFormatter.format(showtime.time)}
