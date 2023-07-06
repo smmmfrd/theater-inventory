@@ -4,6 +4,9 @@ import { caller } from "~/server/api/root";
 import MovieCard, { type MovieCardType } from "~/components/MovieCard";
 import moment from "moment-timezone";
 
+import heroImg from "~/../public/Fake-Theater-Hero.png";
+import Image from "next/image";
+
 type HomeProps = {
   movies: MovieCardType[];
   showDateString: string;
@@ -25,9 +28,18 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }: HomeProps) => {
   return (
     <>
-      <header className="mx-auto w-full max-w-3xl">
-        <h2 className="mx-8 mb-8 mt-6 text-3xl lg:mx-0">
-          Now Playing at Fake Theater on {showDateString}
+      <header className="relative mx-auto w-full max-w-3xl">
+        <Image
+          src={heroImg}
+          height={320}
+          alt={
+            "AI Generated Image representing the front of a fake movie theater."
+          }
+          className="mb-8  brightness-50"
+        />
+        <h2 className="absolute bottom-10 left-2 rounded-xl bg-transHero px-2 py-1 text-3xl text-base-100">
+          Now Playing at Fake Theater
+          <br /> on {showDateString}:
         </h2>
       </header>
 
