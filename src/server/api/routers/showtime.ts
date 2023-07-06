@@ -103,4 +103,14 @@ export const showtimeRouter = createTRPCRouter({
 
     return { showtimes };
   }),
+  getFirstShowtime: publicProcedure.query(async ({ ctx }) => {
+    const showtimes = await ctx.prisma.showtime.findMany({
+      orderBy: {
+        time: "asc",
+      },
+      take: 1,
+    });
+
+    return { firstShowtime: showtimes[0] };
+  }),
 });
