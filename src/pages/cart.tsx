@@ -161,10 +161,10 @@ export default function CartPage() {
       </header>
       {cartTicketOrders.length > 0 && (
         <>
-          <section className="mx-8 rounded-xl border-2 border-primary">
-            <table className="mx-auto table border-separate text-right font-mono">
+          <section className="mx-8">
+            <table className="mx-auto table max-w-2xl text-right font-mono">
               <thead>
-                <tr className="text-lg text-neutral-focus [&>*]:pb-0 [&>*]:font-bold">
+                <tr className="border-b-2 border-accent bg-base-300 text-lg text-neutral-focus [&>*]:py-2 [&>*]:font-bold">
                   <th>#</th>
                   <th>Movie</th>
                   <th>Showtime</th>
@@ -172,9 +172,12 @@ export default function CartPage() {
                   {errors.badShowtimeIds.length > 0 && <th></th>}
                 </tr>
               </thead>
-              <tbody className="">{cartTicketOrders.map(TicketRow)}</tbody>
+              <tbody className="last:border-none odd:border-b-2 even:border-b-2 [&>*]:border-accent-content">
+                {cartTicketOrders.map(TicketRow)}
+              </tbody>
             </table>
           </section>
+
           <section className="px-8">
             {isLoading ? (
               <div className="loading-xl loading loading-spinner mx-auto text-base-100"></div>
