@@ -51,7 +51,7 @@ function ShowtimePiece({ showtime }: ShowtimePieceProps) {
   return (
     <Link
       href={`/movies/${showtime.movieId}/${showtime.showtimeId}`}
-      className="btn-accent btn relative h-10 w-24 overflow-hidden rounded p-0 text-base font-bold text-base-100"
+      className="btn-accent btn  relative h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold text-base-100"
       title={`This showing is ${Math.round(
         ((showtime.maxSeats - showtime.availableSeats) / showtime.maxSeats) *
           100
