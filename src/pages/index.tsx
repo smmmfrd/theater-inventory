@@ -25,9 +25,8 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }: HomeProps) => {
   return (
     <>
-      <header className="">
-        {/* [Carousel] */}
-        <h2 className="mx-8 mb-8 mt-6 text-3xl">
+      <header className="mx-auto w-full max-w-3xl">
+        <h2 className="mx-8 mb-8 mt-6 text-3xl lg:mx-0">
           Now Playing at Fake Theater on {showDateString}
         </h2>
       </header>
