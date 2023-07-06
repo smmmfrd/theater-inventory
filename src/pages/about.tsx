@@ -4,11 +4,8 @@ import React from "react";
 export default function AboutPage() {
   return (
     <>
-      <header className="px-8">
+      <section className="flex max-w-md flex-col gap-8 px-12 sm:mx-auto [&>*]:leading-7">
         <h2 className="mt-4 text-2xl font-bold underline">About</h2>
-      </header>
-
-      <section className="flex flex-col gap-8 px-12 [&>*]:leading-7">
         <p>
           This website is a fake movie theater modeled after my local theater's
           site, where they have live updating ticket sales.
