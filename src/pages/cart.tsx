@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { type CartTicketOrder, useTicketStore } from "~/store/TicketStore";
+import { TICKET_PRICES } from "~/utils";
 import { api } from "~/utils/api";
 
 export default function CartPage() {
@@ -192,6 +193,16 @@ export default function CartPage() {
                 <section>
                   <h4 className="mb-2 flex justify-between px-4 text-xl font-semibold italic">
                     Total -{" "}
+                    <span className="font-thin capitalize">
+                      {cartTicketOrders
+                        .map(
+                          (order) =>
+                            `(${order.number}) ${order.showtimeType
+                              .split(/(?=[A-Z])/)
+                              .join(" ")}`
+                        )
+                        .join(", ")}
+                    </span>
                     <span>
                       {`${cartTicketOrders.reduce(
                         (acc, order) => acc + order.number * order.ticketPrice,
