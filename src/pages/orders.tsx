@@ -64,7 +64,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   return (
     <>
-      <header className="px-8">
+      <header className="max-w-md px-8 sm:mx-auto">
         <h2 className="mt-4 text-4xl font-bold">Ticket Orders</h2>
         <p>
           View and Delete any orders here. To find the showtime you are looking
@@ -110,7 +110,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         </form>
       </header>
 
-      <div className="flex flex-wrap justify-center gap-2">
+      <div className="flex max-w-4xl flex-wrap justify-center gap-2 md:mx-auto">
         {movies
           .filter((movie) =>
             selectedMovie.id > 0 ? selectedMovie.id === movie.movieId : true
@@ -119,7 +119,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             return movie.showtimes.map((showtime) => (
               <section
                 key={showtime.showtimeId}
-                className="collapse-arrow collapse"
+                className="collapse-arrow collapse h-min w-max border-2"
               >
                 <input
                   type="checkbox"
@@ -130,21 +130,27 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                         : showtime.showtimeId
                     )
                   }
+                  checked={showtime.showtimeId === queryKey}
                 />
 
-                <h3 className="collapse-title">
+                <h3
+                  className={`collapse-title ${
+                    showtime.showtimeId === queryKey && "border-b-4"
+                  }`}
+                >
                   {movie.title} - {showtime.time}
                 </h3>
 
-                <div className="collapse-content">
-                  {isLoading && (
-                    <div className="loading loading-spinner loading-xs mx-auto"></div>
-                  )}
-                  {showtime.showtimeId === queryKey &&
-                    data?.orders !== undefined && (
+                {showtime.showtimeId === queryKey && (
+                  <div className="collapse-content">
+                    {isLoading && (
+                      <div className="loading loading-spinner loading-xs mx-auto"></div>
+                    )}
+                    {data?.orders !== undefined && (
                       <ShowtimeData data={data} refetch={refetch} />
                     )}
-                </div>
+                  </div>
+                )}
               </section>
             ));
           })}
@@ -182,10 +188,13 @@ const ShowtimeData = ({ data, refetch }: ShowtimeDataTypes) => {
   };
 
   return (
-    <div className="flex flex-col gap-1 px-2 py-1">
+    <div className="flex flex-col gap-2 px-0.5 py-1">
       {localData.orders.length > 0 ? (
         localData.orders.map((order) => (
-          <div className="flex justify-between" key={order.ticketId}>
+          <div
+            className="flex w-full justify-between gap-2"
+            key={order.ticketId}
+          >
             {order.name} - {order.number}
             <button
               className="btn-outline btn-xs btn-circle btn border-2"
