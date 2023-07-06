@@ -16,8 +16,8 @@ export default function MovieCard({
   posterImage,
 }: MovieCardType) {
   return (
-    <section className="mx-8 flex max-w-3xl flex-col gap-4 rounded bg-neutral p-8 sm:flex-row sm:pr-4 md:mx-auto">
-      <header className="max-w-[208px] flex-none text-base-100">
+    <section className="relative mx-8 flex max-w-3xl flex-col gap-4 rounded bg-neutral p-8 sm:flex-row sm:pr-4 md:mx-auto">
+      <header className="sticky top-16 mx-auto h-min max-w-[208px] flex-none text-base-100">
         <Link href={`movies/${movieId}`}>
           <Image
             className="mx-auto mb-1"
@@ -30,7 +30,7 @@ export default function MovieCard({
         </Link>
       </header>
 
-      <div className="flex flex-col justify-between gap-4">
+      <div className="flex flex-grow flex-col justify-between gap-4">
         <ShowtimeCard movieId={movieId} />
 
         <footer className="text-center text-base-100">
