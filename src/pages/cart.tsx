@@ -94,9 +94,12 @@ export default function CartPage() {
     };
   }, [errors, router, clearOrders]);
 
-  const TicketRow = (ticketOrder: CartTicketOrder) => (
+  const TicketRow = (ticketOrder: CartTicketOrder, index: number) => (
     <tr
-      className="text-xl [&>*]:py-2.5"
+      className={`text-xl [&>*]:py-2.5 ${
+        index !== cartTicketOrders.length - 1 &&
+        "border-b-2 border-accent-content"
+      }`}
       key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
     >
       <td className="px-0">
@@ -112,12 +115,15 @@ export default function CartPage() {
         />
       </td>
       <td>
-        <Link href={`/movies/${ticketOrder.movieId}`}>
+        <Link className="link" href={`/movies/${ticketOrder.movieId}`}>
           {ticketOrder.movieTitle}
         </Link>
       </td>
       <td>
-        <Link href={`/movies/${ticketOrder.movieId}/${ticketOrder.showtimeId}`}>
+        <Link
+          className="link"
+          href={`/movies/${ticketOrder.movieId}/${ticketOrder.showtimeId}`}
+        >
           {ticketOrder.showtime}
         </Link>
       </td>
@@ -193,15 +199,13 @@ export default function CartPage() {
                   {errors.badShowtimeIds.length > 0 && <th></th>}
                 </tr>
               </thead>
-              <tbody className="last:border-none odd:border-b-2 even:border-b-2 [&>*]:border-accent-content">
-                {cartTicketOrders.map(TicketRow)}
-              </tbody>
+              <tbody>{cartTicketOrders.map(TicketRow)}</tbody>
             </table>
           </section>
 
           <section className="mx-auto w-full max-w-2xl px-8">
             {isLoading ? (
-              <div className="loading-xl loading loading-spinner mx-auto text-base-100"></div>
+              <div className="loading-xl loading loading-spinner mx-auto block"></div>
             ) : errors.badShowtimeIds.length === 0 ? (
               <>
                 <h3 className="mb-4 text-2xl font-bold">
@@ -238,6 +242,7 @@ export default function CartPage() {
                       className="input join-item"
                       placeholder="Name here..."
                       onChange={handleChange}
+                      maxLength={24}
                     />
                     <button type="submit" className="btn-outline join-item btn">
                       Place Order
