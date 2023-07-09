@@ -54,7 +54,7 @@ function CreateSales(showtimes: FullShowtime[], name: string) {
 
   const orders = randomizedShowtimes.map((showtime, index) => {
     return {
-      name: `${name} ${index}`,
+      name: `${name} ${index + 1}`,
       number: randomSales(showtime.availableSeats),
       movieTitle: showtime.movie.title,
       showtimeId: showtime.showtimeId,
@@ -86,42 +86,3 @@ export default async function handler(
 
   res.status(200).json({ message: "Success" });
 }
-
-// async function localHandler() {
-//   const prisma = new PrismaClient();
-
-//   const showtimes = await prisma.showtime.findMany({
-//     select: {
-//       showtimeId: true,
-//       time: true,
-//       maxSeats: true,
-//       movie: {
-//         select: {
-//           title: true,
-//         },
-//       },
-//       tickets: true,
-//     },
-//     orderBy: {
-//       time: "asc",
-//     },
-//   });
-
-//   const matineeShowtimes = sanitizeShowtime(showtimes, 10, 14);
-//   const afternoonShowtimes = sanitizeShowtime(showtimes, 14, 18);
-//   const lateNightShowtimes = sanitizeShowtime(showtimes, 18, 24);
-
-//   const sales = [
-//     CreateSales(matineeShowtimes, "Old Couple"),
-//     CreateSales(afternoonShowtimes, "Couple w/ Kids"),
-//     CreateSales(lateNightShowtimes, "Teenage Group"),
-//   ].flat();
-
-//   const orders = await prisma.ticketOrder.createMany({ data: sales });
-
-//   console.log(orders, " random ticket orders made.");
-// }
-
-// if (!process.env.VERCEL_URL) {
-//   void localHandler();
-// }
