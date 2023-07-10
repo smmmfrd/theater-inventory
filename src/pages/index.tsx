@@ -49,6 +49,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           title={movie.title}
           posterImage={movie.posterImage}
           movieId={movie.movieId}
+          showtimeCount={movie.showtimeCount}
         />
       ))}
     </>

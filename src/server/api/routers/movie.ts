@@ -3,16 +3,28 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const movieRouter = createTRPCRouter({
   getMovies: publicProcedure.query(async ({ ctx }) => {
-    const movies = await ctx.prisma.movie.findMany({
+    const movieData = await ctx.prisma.movie.findMany({
       select: {
         movieId: true,
         title: true,
         posterImage: true,
+        _count: {
+          select: {
+            showtimes: true,
+          },
+        },
       },
       orderBy: {
         ranking: "asc",
       },
     });
+
+    const movies = movieData.map((movie) => ({
+      movieId: movie.movieId,
+      title: movie.title,
+      posterImage: movie.posterImage,
+      showtimeCount: movie._count.showtimes,
+    }));
 
     return {
       movies,

@@ -1,11 +1,6 @@
 import Link from "next/link";
 import { api } from "~/utils/api";
 
-type ShowtimeCardProps = {
-  styleExtensions?: string;
-  movieId: number;
-};
-
 export const dateFormatter = new Intl.DateTimeFormat("default", {
   hour: "numeric",
   minute: "numeric",
@@ -51,7 +46,7 @@ function ShowtimePiece({ showtime }: ShowtimePieceProps) {
   return (
     <Link
       href={`/movies/${showtime.movieId}/${showtime.showtimeId}`}
-      className="btn-accent btn  relative h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold text-base-100"
+      className="btn-accent btn relative h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold text-base-100"
       title={`This showing is ${Math.round(
         ((showtime.maxSeats - showtime.availableSeats) / showtime.maxSeats) *
           100
@@ -65,9 +60,16 @@ function ShowtimePiece({ showtime }: ShowtimePieceProps) {
   );
 }
 
+type ShowtimeCardProps = {
+  styleExtensions?: string;
+  movieId: number;
+  showtimeCount?: number;
+};
+
 export default function ShowtimeCard({
   styleExtensions = "",
   movieId,
+  showtimeCount,
 }: ShowtimeCardProps) {
   const { data, isLoading } = api.showtimes.getShowtimes.useQuery(
     { movieId },
@@ -81,13 +83,22 @@ export default function ShowtimeCard({
     <section className={`bg-neutral ${styleExtensions}`}>
       <h4 className="mb-2 font-bold text-base-100 underline">Showtimes</h4>
       <div className="flex flex-wrap justify-center gap-2">
-        {isLoading ? (
-          <div className="loading loading-spinner loading-sm mx-auto text-base-100"></div>
-        ) : (
-          data?.showtimes.map((showtime) => (
-            <ShowtimePiece showtime={showtime} key={showtime.showtimeId} />
-          ))
-        )}
+        {isLoading
+          ? showtimeCount &&
+            Array(showtimeCount)
+              .fill(0)
+              .map((_, index) => (
+                <button
+                  key={index}
+                  className="btn-disabled btn h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold text-base-100"
+                >
+                  {/* --:-- -- */}
+                  <span className="loading loading-dots"></span>
+                </button>
+              ))
+          : data?.showtimes.map((showtime) => (
+              <ShowtimePiece showtime={showtime} key={showtime.showtimeId} />
+            ))}
       </div>
     </section>
   );
