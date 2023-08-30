@@ -5,12 +5,12 @@ export default function Navbar() {
   const { cartTicketOrders } = useTicketStore();
 
   return (
-    <nav className="sticky top-0 z-10 -mb-5 h-14 bg-primary px-4 py-3 text-neutral">
+    <nav className="sticky top-0 z-10 -mb-5 h-14 border-b bg-primary px-4 py-3 text-neutral">
       <div className="mx-auto flex max-w-3xl items-end justify-between">
         <Link href="/" className="link no-underline hover:underline">
           <h1 className="text-2xl">Fake Theater</h1>
         </Link>
-        <ul className="flex gap-4">
+        <ul className="flex gap-4 pb-0.5">
           <li>
             <Link
               href="/orders"
