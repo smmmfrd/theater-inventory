@@ -10,9 +10,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <Navbar />
-      <main className="bg-base grid min-h-screen grid-cols-[repeat(auto-fit,minmax(512px,1fr))] pt-96">
-        <Component {...pageProps} />
-      </main>
+      <Component {...pageProps} />
       <Footer />
     </>
   );

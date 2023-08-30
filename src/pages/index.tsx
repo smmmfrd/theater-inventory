@@ -50,15 +50,18 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <meta name="description" content="Fake Movie Theater Ticket App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {movies.map((movie) => (
-        <MovieCard
-          key={movie.movieId}
-          title={movie.title}
-          posterImage={movie.posterImage}
-          movieId={movie.movieId}
-          showtimeCount={movie.showtimeCount}
-        />
-      ))}
+
+      <main className="bg-base grid min-h-screen grid-cols-[repeat(auto-fit,minmax(512px,1fr))] pt-96">
+        {movies.map((movie) => (
+          <MovieCard
+            key={movie.movieId}
+            title={movie.title}
+            posterImage={movie.posterImage}
+            movieId={movie.movieId}
+            showtimeCount={movie.showtimeCount}
+          />
+        ))}
+      </main>
     </>
   );
 };
