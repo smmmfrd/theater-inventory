@@ -15,17 +15,17 @@ export default function MovieHero({
 }: MovieHeroProps) {
   return (
     <>
-      <header className="relative">
+      <header className="relative w-full">
         <div
           style={
             {
               "--image-url": `url(${movie.backdropImage})`,
             } as React.CSSProperties
           }
-          className="h-72 w-full max-w-7xl bg-gray-600 bg-[image:var(--image-url)] bg-cover bg-center bg-no-repeat bg-blend-multiply"
+          className="mx-auto h-72 w-full max-w-7xl bg-gray-600 bg-[image:var(--image-url)] bg-cover bg-center bg-no-repeat bg-blend-multiply"
         ></div>
         <Image
-          className="absolute left-8 top-8 h-[288px] rounded"
+          className="absolute left-8 top-8 h-[288px] rounded md:left-16 lg:left-32"
           src={movie.posterImage}
           width={208}
           height={288}
@@ -33,7 +33,7 @@ export default function MovieHero({
         />
       </header>
 
-      <section className="md:flex md:items-stretch">
+      <section className="mx-auto w-full max-w-5xl md:flex md:items-stretch">
         <div className="mb-4 mt-10 md:w-96 md:flex-none">
           <h2 className="px-8 text-3xl font-bold">
             {altTitle.length > 0 ? altTitle : `${movie.title} at Fake Theater`}
