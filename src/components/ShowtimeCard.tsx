@@ -46,7 +46,7 @@ function ShowtimePiece({ showtime }: ShowtimePieceProps) {
   return (
     <Link
       href={`/movies/${showtime.movieId}/${showtime.showtimeId}`}
-      className="btn-accent btn relative h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold text-base-100"
+      className="btn-accent btn relative h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold"
       title={`This showing is ${Math.round(
         ((showtime.maxSeats - showtime.availableSeats) / showtime.maxSeats) *
           100
@@ -54,7 +54,7 @@ function ShowtimePiece({ showtime }: ShowtimePieceProps) {
     >
       {dateFormatter.format(showtime.time)}
       <span
-        className={`absolute bottom-0 left-0 h-1 bg-base-100 ${width}`}
+        className={`absolute bottom-0 left-0 h-1 bg-primary ${width}`}
       ></span>
     </Link>
   );
@@ -80,8 +80,8 @@ export default function ShowtimeCard({
   );
 
   return (
-    <section className={`bg-neutral ${styleExtensions}`}>
-      <h4 className="mb-2 font-bold text-base-100 underline">Showtimes</h4>
+    <section className={`${styleExtensions}`}>
+      <h4 className="mb-2 font-bold text-base-content underline">Showtimes</h4>
       <div className="flex flex-wrap justify-center gap-2">
         {isLoading
           ? showtimeCount &&
@@ -90,7 +90,7 @@ export default function ShowtimeCard({
               .map((_, index) => (
                 <button
                   key={index}
-                  className="btn-disabled btn h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold text-base-100"
+                  className="btn-disabled btn h-10 w-24 overflow-hidden rounded border-0 p-0 text-base font-bold"
                 >
                   {/* --:-- -- */}
                   <span className="loading loading-dots"></span>

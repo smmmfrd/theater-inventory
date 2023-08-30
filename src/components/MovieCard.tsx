@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ShowtimeCard from "./ShowtimeCard";
 
-export type MovieCardType = {
+export type MovieCardProps = {
   movieId: number;
   title: string;
   posterImage: string;
@@ -14,10 +14,10 @@ export default function MovieCard({
   title,
   posterImage,
   showtimeCount,
-}: MovieCardType) {
+}: MovieCardProps) {
   return (
-    <section className="relative mx-8 flex max-w-3xl flex-col gap-4 rounded bg-neutral p-8 sm:flex-row sm:pr-4 md:mx-auto">
-      <header className="top-16 mx-auto h-min max-w-[208px] flex-none text-base-100 sm:sticky">
+    <section className="relative mx-8 flex max-w-2xl flex-col gap-8 rounded bg-neutral p-8 text-base-content sm:flex-row sm:pr-4 md:mx-auto">
+      <header className="top-16 mx-auto h-min max-w-[208px] flex-none sm:sticky">
         <Link href={`movies/${movieId}`}>
           <Image
             className="mx-auto mb-1"
@@ -33,7 +33,7 @@ export default function MovieCard({
       <div className="flex flex-grow flex-col justify-between gap-4">
         <ShowtimeCard movieId={movieId} showtimeCount={showtimeCount} />
 
-        <footer className="text-center text-base-100">
+        <footer className="text-center">
           <Link className="link" href={`movies/${movieId}`}>
             More Info
           </Link>
