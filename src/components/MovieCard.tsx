@@ -16,7 +16,7 @@ export default function MovieCard({
   showtimeCount,
 }: MovieCardProps) {
   return (
-    <section className="relative mx-8 flex max-w-2xl flex-col gap-8 rounded bg-neutral p-8 text-base-content sm:flex-row sm:pr-4 md:mx-auto">
+    <section className="relative m-8 flex flex-col gap-8 rounded bg-neutral p-8 text-base-content md:flex-row lg:flex-col">
       <header className="top-16 mx-auto h-min max-w-[208px] flex-none sm:sticky">
         <Link href={`movies/${movieId}`}>
           <Image

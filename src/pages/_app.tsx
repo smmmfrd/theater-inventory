@@ -9,17 +9,11 @@ import Footer from "~/components/Footer";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
-      <Head>
-        <title>Fake Theater</title>
-        <meta name="description" content="Fake Movie Theater Ticket App" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="relative flex min-h-screen flex-col gap-5 bg-base-200">
-        <Navbar />
+      <Navbar />
+      <main className="bg-base grid min-h-screen grid-cols-[repeat(auto-fit,minmax(512px,1fr))] pt-96">
         <Component {...pageProps} />
-        {/* Footer is kept here so it's always at the bottom of the screen. */}
-        <Footer />
       </main>
+      <Footer />
     </>
   );
 };
