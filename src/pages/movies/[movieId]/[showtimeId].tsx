@@ -153,7 +153,10 @@ const ShowtimePage: NextPage<
 
   return (
     <RegularLayout>
-      <MovieHero movie={movie} altTitle={`${time} showing for ${movie.title}`}>
+      <MovieHero
+        movie={movie}
+        altTitle={`${time} showing for ${movie.title} with ${safeShowtime.maxSeats} seats.`}
+      >
         <DisplayForm />
       </MovieHero>
 
