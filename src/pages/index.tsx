@@ -27,22 +27,6 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   movies,
   showDateString,
 }: HomeProps) => {
-  // return (
-  //   <header className="absolute top-0 w-full">
-  //     <Image
-  //       src={heroImg}
-  //       height={320}
-  //       alt={
-  //         "AI Generated Image representing the front of a fake movie theater."
-  //       }
-  //       className="mx-auto mb-8 max-w-5xl brightness-50"
-  //     />
-  //     <h2 className="absolute bottom-10 left-2 w-96 rounded-xl bg-transHero px-2 py-1 text-3xl text-base-content lg:w-max">
-  //       Now Playing at Fake Theater on {showDateString}:
-  //     </h2>
-  //   </header>
-  // );
-
   return (
     <>
       <Head>
@@ -51,7 +35,21 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="bg-base grid min-h-screen grid-cols-[repeat(auto-fit,minmax(512px,1fr))] pt-96">
+      <header className="relative mx-auto mb-8 w-full max-w-5xl">
+        <Image
+          src={heroImg}
+          height={320}
+          alt={
+            "AI Generated Image representing the front of a fake movie theater."
+          }
+          className="brightness-50"
+        />
+        <h2 className="w-96 rounded-xl px-2 py-1 text-3xl text-neutral-content lg:w-full">
+          Now Playing at Fake Theater on {showDateString}:
+        </h2>
+      </header>
+
+      <main className="bg-base grid min-h-screen sm:grid-cols-[repeat(auto-fit,minmax(512px,1fr))]">
         {movies.map((movie) => (
           <MovieCard
             key={movie.movieId}
