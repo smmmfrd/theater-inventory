@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { type CartTicketOrder, useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
+import RegularLayout from "~/components/RegularLayout";
 
 export default function CartPage() {
   const { cartTicketOrders, deleteOrder, clearOrders, updateOrder } =
@@ -168,7 +169,7 @@ export default function CartPage() {
   );
 
   return (
-    <>
+    <RegularLayout>
       <header className="px-8">
         <h2 className="mt-8 text-4xl font-bold underline">
           {`${
@@ -274,6 +275,6 @@ export default function CartPage() {
           </section>
         </>
       )}
-    </>
+    </RegularLayout>
   );
 }

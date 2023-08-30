@@ -1,9 +1,10 @@
 import Link from "next/link";
 import React from "react";
+import RegularLayout from "~/components/RegularLayout";
 
 export default function AboutPage() {
   return (
-    <>
+    <RegularLayout>
       <section className="flex max-w-md flex-col gap-8 px-12 sm:mx-auto [&>*]:leading-7">
         <h2 className="mt-4 text-2xl font-bold underline">About</h2>
         <p>
@@ -37,7 +38,7 @@ export default function AboutPage() {
           for it, from 2 to (currently) 15% of the maximum number of seats left.
         </p>
       </section>
-    </>
+    </RegularLayout>
   );
 }
 

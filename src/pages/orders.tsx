@@ -4,6 +4,7 @@ import { dateFormatter } from "~/components/ShowtimeCard";
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { type TicketOrder } from "@prisma/client";
+import RegularLayout from "~/components/RegularLayout";
 
 type SimpleMovie = {
   title: string;
@@ -63,7 +64,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   });
 
   return (
-    <>
+    <RegularLayout>
       <header className="max-w-md px-8 sm:mx-auto">
         <h2 className="mt-4 text-4xl font-bold">Ticket Orders</h2>
         <p>
@@ -155,7 +156,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             ));
           })}
       </div>
-    </>
+    </RegularLayout>
   );
 };
 

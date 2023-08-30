@@ -11,6 +11,7 @@ import React from "react";
 import MovieHero from "~/components/MovieHero";
 import ShowtimeCard from "~/components/ShowtimeCard";
 import { caller } from "~/server/api/root";
+import RegularLayout from "~/components/RegularLayout";
 
 // We need to convert our response to and from a string
 interface MovieStaticPathParams extends ParsedUrlQuery {
@@ -66,7 +67,7 @@ const MoviePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   movie,
 }: MoviePageProps) => {
   return (
-    <>
+    <RegularLayout>
       <Head>
         <title>{movie.title} | Fake Theater</title>
       </Head>
@@ -76,7 +77,7 @@ const MoviePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           movieId={movie.movieId}
         />
       </MovieHero>
-    </>
+    </RegularLayout>
   );
 };
 

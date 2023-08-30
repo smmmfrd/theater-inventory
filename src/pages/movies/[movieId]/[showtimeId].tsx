@@ -15,6 +15,7 @@ import { TICKET_PRICES } from "~/utils";
 import { caller } from "~/server/api/root";
 import { useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
+import RegularLayout from "~/components/RegularLayout";
 
 interface ShowtimeStaticPathParams extends ParsedUrlQuery {
   movieId: string;
@@ -151,7 +152,7 @@ const ShowtimePage: NextPage<
   };
 
   return (
-    <>
+    <RegularLayout>
       <MovieHero movie={movie} altTitle={`${time} showing for ${movie.title}`}>
         <DisplayForm />
       </MovieHero>
@@ -162,7 +163,7 @@ const ShowtimePage: NextPage<
       >
         See other showtimes
       </Link>
-    </>
+    </RegularLayout>
   );
 };
 
