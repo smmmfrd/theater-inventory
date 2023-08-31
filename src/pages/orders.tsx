@@ -5,6 +5,7 @@ import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { type TicketOrder } from "@prisma/client";
 import RegularLayout from "~/components/RegularLayout";
+import Head from "next/head";
 
 type SimpleMovie = {
   title: string;
@@ -64,105 +65,110 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   });
 
   return (
-    <RegularLayout>
-      <header className="max-w-md px-8 sm:mx-auto">
-        <h2 className="mt-4 text-4xl font-bold">Ticket Orders</h2>
-        <p>
-          View and Delete any orders here. To find the showtime you are looking
-          for faster, use below to filter by the movie.
-        </p>
+    <>
+      <Head>
+        <title>Orders | Fake Theater</title>
+      </Head>
+      <RegularLayout>
+        <header className="max-w-md px-8 sm:mx-auto">
+          <h2 className="mt-4 text-4xl font-bold">Ticket Orders</h2>
+          <p>
+            View and Delete any orders here. To find the showtime you are
+            looking for faster, use below to filter by the movie.
+          </p>
 
-        <h3 className="-mb-3 mt-8 text-2xl underline">Filter by movie</h3>
-        <form className="collapse-plus collapse mt-4 bg-base-300">
-          <input type="checkbox" />
-          <h4 className="collapse-title truncate font-mono text-lg text-neutral-content">
-            {selectedMovie.id > 0
-              ? `(${selectedMovie.title})`
-              : "Pick a movie..."}
-          </h4>
-          <div className="collapse-content">
-            <label className="label cursor-pointer">
-              <span className="label-text">All</span>
-              <input
-                type="radio"
-                name="all"
-                className="radio"
-                value={0}
-                checked={selectedMovie.id === 0}
-                onChange={() => setSelectedMovie({ id: 0, title: "" })}
-              />
-            </label>
-            {movies.map(({ title, movieId, showtimes }) => (
-              <label key={movieId} className="label cursor-pointer">
-                <span className="label-text">
-                  {title} - {showtimes.length}
-                </span>
+          <h3 className="-mb-3 mt-8 text-2xl underline">Filter by movie</h3>
+          <form className="collapse-plus collapse mt-4 bg-base-300">
+            <input type="checkbox" />
+            <h4 className="collapse-title truncate font-mono text-lg text-neutral-content">
+              {selectedMovie.id > 0
+                ? `(${selectedMovie.title})`
+                : "Pick a movie..."}
+            </h4>
+            <div className="collapse-content">
+              <label className="label cursor-pointer">
+                <span className="label-text">All</span>
                 <input
                   type="radio"
-                  name={title}
+                  name="all"
                   className="radio"
-                  value={movieId}
-                  checked={selectedMovie.id === movieId}
-                  onChange={() => setSelectedMovie({ id: movieId, title })}
+                  value={0}
+                  checked={selectedMovie.id === 0}
+                  onChange={() => setSelectedMovie({ id: 0, title: "" })}
                 />
               </label>
-            ))}
-          </div>
-        </form>
-      </header>
+              {movies.map(({ title, movieId, showtimes }) => (
+                <label key={movieId} className="label cursor-pointer">
+                  <span className="label-text">
+                    {title} - {showtimes.length}
+                  </span>
+                  <input
+                    type="radio"
+                    name={title}
+                    className="radio"
+                    value={movieId}
+                    checked={selectedMovie.id === movieId}
+                    onChange={() => setSelectedMovie({ id: movieId, title })}
+                  />
+                </label>
+              ))}
+            </div>
+          </form>
+        </header>
 
-      <div className="flex max-w-4xl flex-wrap justify-center gap-2 md:mx-auto">
-        {movies
-          .filter((movie) =>
-            selectedMovie.id > 0 ? selectedMovie.id === movie.movieId : true
-          )
-          .map((movie) => {
-            return movie.showtimes.map((showtime) => (
-              <section
-                key={showtime.showtimeId}
-                className="collapse-arrow collapse h-min w-max border-2 text-neutral-content"
-              >
-                <input
-                  type="checkbox"
-                  onChange={() =>
-                    setQueryKey(
-                      showtime.showtimeId === queryKey
-                        ? -1
-                        : showtime.showtimeId
-                    )
-                  }
-                  checked={showtime.showtimeId === queryKey}
-                />
-                {/* Showtime Title & Time */}
-                <h3
-                  className={`collapse-title ${
-                    showtime.showtimeId === queryKey && "border-b-2"
-                  } w-64`}
+        <div className="flex max-w-4xl flex-wrap justify-center gap-2 md:mx-auto">
+          {movies
+            .filter((movie) =>
+              selectedMovie.id > 0 ? selectedMovie.id === movie.movieId : true
+            )
+            .map((movie) => {
+              return movie.showtimes.map((showtime) => (
+                <section
+                  key={showtime.showtimeId}
+                  className="collapse-arrow collapse h-min w-max border-2 text-neutral-content"
                 >
-                  {/* Truncate Movie Title */}
-                  {movie.title.length > 12
-                    ? `${movie.title.slice(0, 12)}...`
-                    : movie.title}{" "}
-                  - {showtime.time}
-                </h3>
+                  <input
+                    type="checkbox"
+                    onChange={() =>
+                      setQueryKey(
+                        showtime.showtimeId === queryKey
+                          ? -1
+                          : showtime.showtimeId
+                      )
+                    }
+                    checked={showtime.showtimeId === queryKey}
+                  />
+                  {/* Showtime Title & Time */}
+                  <h3
+                    className={`collapse-title ${
+                      showtime.showtimeId === queryKey && "border-b-2"
+                    } w-64`}
+                  >
+                    {/* Truncate Movie Title */}
+                    {movie.title.length > 12
+                      ? `${movie.title.slice(0, 12)}...`
+                      : movie.title}{" "}
+                    - {showtime.time}
+                  </h3>
 
-                {showtime.showtimeId === queryKey && (
-                  <div className="collapse-content">
-                    {isLoading && (
-                      <div className="w-full pt-4 text-center">
-                        <div className="loading loading-dots loading-xs"></div>
-                      </div>
-                    )}
-                    {data?.orders !== undefined && (
-                      <ShowtimeData data={data} refetch={refetch} />
-                    )}
-                  </div>
-                )}
-              </section>
-            ));
-          })}
-      </div>
-    </RegularLayout>
+                  {showtime.showtimeId === queryKey && (
+                    <div className="collapse-content">
+                      {isLoading && (
+                        <div className="w-full pt-4 text-center">
+                          <div className="loading loading-dots loading-xs"></div>
+                        </div>
+                      )}
+                      {data?.orders !== undefined && (
+                        <ShowtimeData data={data} refetch={refetch} />
+                      )}
+                    </div>
+                  )}
+                </section>
+              ));
+            })}
+        </div>
+      </RegularLayout>
+    </>
   );
 };
 

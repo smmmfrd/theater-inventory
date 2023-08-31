@@ -16,6 +16,7 @@ import { caller } from "~/server/api/root";
 import { useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
 import RegularLayout from "~/components/RegularLayout";
+import Head from "next/head";
 
 interface ShowtimeStaticPathParams extends ParsedUrlQuery {
   movieId: string;
@@ -152,21 +153,26 @@ const ShowtimePage: NextPage<
   };
 
   return (
-    <RegularLayout>
-      <MovieHero
-        movie={movie}
-        altTitle={`${time} showing for ${movie.title} with ${safeShowtime.maxSeats} seats.`}
-      >
-        <DisplayForm />
-      </MovieHero>
+    <>
+      <Head>
+        <title>{`${time} - ${movie.title} | Fake Theater`}</title>
+      </Head>
+      <RegularLayout>
+        <MovieHero
+          movie={movie}
+          altTitle={`${time} showing for ${movie.title} with ${safeShowtime.maxSeats} seats.`}
+        >
+          <DisplayForm />
+        </MovieHero>
 
-      <Link
-        href={`/movies/${movie.movieId}`}
-        className="btn-primary btn mx-auto mb-4 mt-12 md:mt-4"
-      >
-        See other showtimes
-      </Link>
-    </RegularLayout>
+        <Link
+          href={`/movies/${movie.movieId}`}
+          className="btn-primary btn mx-auto mb-4 mt-12 md:mt-4"
+        >
+          See other showtimes
+        </Link>
+      </RegularLayout>
+    </>
   );
 };
 

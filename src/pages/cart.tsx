@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { type CartTicketOrder, useTicketStore } from "~/store/TicketStore";
 import { api } from "~/utils/api";
 import RegularLayout from "~/components/RegularLayout";
+import Head from "next/head";
 
 export default function CartPage() {
   const { cartTicketOrders, deleteOrder, clearOrders, updateOrder } =
@@ -168,120 +169,129 @@ export default function CartPage() {
   );
 
   return (
-    <RegularLayout>
-      <header
-        className={`-mb-5 w-96  border-8 ${
-          cartTicketOrders.length > 0
-            ? " rounded-t-lg border-b-0"
-            : "rounded-lg"
-        }  bg-neutral px-8 text-neutral-content`}
-      >
-        <h2 className="mt-8 text-4xl font-bold underline">
-          {`${
-            isSuccess
-              ? errors.badShowtimeIds.length > 0
-                ? "Your order was placed, but there were issues!"
-                : "Your order was placed!"
-              : `Your Cart ${cartTicketOrders.length > 0 ? "" : "Is Empty!"}`
-          }`}
-        </h2>
+    <>
+      <Head>
+        <title>Your Cart | Fake Theater</title>
+      </Head>
+      <RegularLayout>
+        <header
+          className={`-mb-5 w-96  border-8 ${
+            cartTicketOrders.length > 0
+              ? " rounded-t-lg border-b-0"
+              : "rounded-lg"
+          }  bg-neutral px-8 text-neutral-content`}
+        >
+          <h2 className="mt-8 text-4xl font-bold underline">
+            {`${
+              isSuccess
+                ? errors.badShowtimeIds.length > 0
+                  ? "Your order was placed, but there were issues!"
+                  : "Your order was placed!"
+                : `Your Cart ${cartTicketOrders.length > 0 ? "" : "Is Empty!"}`
+            }`}
+          </h2>
 
-        {cartTicketOrders.length === 0 && (
-          <Link href="/" className="btn-primary btn mx-auto mb-8 mt-12">
-            Select {isSuccess ? "another" : "a"} Movie & Showtime
-          </Link>
+          {cartTicketOrders.length === 0 && (
+            <Link href="/" className="btn-primary btn mx-auto mb-8 mt-12">
+              Select {isSuccess ? "another" : "a"} Movie & Showtime
+            </Link>
+          )}
+        </header>
+        {cartTicketOrders.length > 0 && (
+          <>
+            {/* TABLE */}
+            <section className="-mb-5 w-96 border-l-8 border-r-8 bg-neutral pt-5 text-neutral-content">
+              <table className="table max-w-2xl text-right font-mono">
+                <thead>
+                  <tr className="border-b-2 border-t-2 border-neutral-content bg-base-300 text-lg text-neutral-content [&>*]:py-2 [&>*]:font-bold">
+                    <th>#</th>
+                    <th>Movie</th>
+                    <th>Showtime</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>{cartTicketOrders.map(TicketRow)}</tbody>
+              </table>
+            </section>
+
+            <section className="mx-auto w-full max-w-sm rounded-b-lg border-8 border-t-0 bg-neutral px-2 pb-5 pt-5 text-neutral-content">
+              {isLoading ? (
+                <div className="loading-xl loading loading-spinner mx-auto block"></div>
+              ) : errors.badShowtimeIds.length === 0 ? (
+                <>
+                  <h3 className="mt-8 text-2xl font-bold">
+                    &quot;Purchase&quot; Tickets
+                  </h3>
+
+                  <div className="divider mb-0 mt-0 w-full"></div>
+                  {/* Displays the toals for each type of showing */}
+                  <section>
+                    <h4 className="mb-2 flex justify-between px-4 text-xl font-semibold">
+                      <span>Total -</span>
+                      <span>
+                        {cartTicketOrders.map((order) => (
+                          <>
+                            <i className="font-thin capitalize italic">
+                              {order.number}{" "}
+                              {order.showtimeType.split(/(?=[A-Z])/).join(" ")}-{" "}
+                              {order.ticketPrice} $ ea.
+                            </i>
+                            <br />
+                          </>
+                        ))}
+                      </span>
+                      <span>
+                        {`${cartTicketOrders.reduce(
+                          (acc, order) =>
+                            acc + order.number * order.ticketPrice,
+                          0
+                        )}$`}
+                      </span>
+                    </h4>
+
+                    <form onSubmit={handleSubmit} className="join ml-1.5 mt-4">
+                      <input
+                        type="text"
+                        name="name"
+                        className="input join-item"
+                        placeholder="Enter a name here..."
+                        onChange={handleChange}
+                        maxLength={24}
+                      />
+                      <button
+                        type="submit"
+                        className="btn-outline join-item btn"
+                      >
+                        Place Order
+                      </button>
+                    </form>
+
+                    {errors.name && (
+                      <p className="pl-4 text-sm text-error">
+                        Please enter a valid name.
+                      </p>
+                    )}
+                  </section>
+                </>
+              ) : (
+                <>
+                  <p>
+                    The number of available seats changed while your order was
+                    processing. All other orders were successful.
+                  </p>
+                  <p>
+                    Click the error to go back to the showtime or remove the
+                    order from your cart.
+                  </p>
+                  <p>
+                    If you leave this page all erroneous orders will be cleared.
+                  </p>
+                </>
+              )}
+            </section>
+          </>
         )}
-      </header>
-      {cartTicketOrders.length > 0 && (
-        <>
-          {/* TABLE */}
-          <section className="-mb-5 w-96 border-l-8 border-r-8 bg-neutral pt-5 text-neutral-content">
-            <table className="table max-w-2xl text-right font-mono">
-              <thead>
-                <tr className="border-b-2 border-t-2 border-neutral-content bg-base-300 text-lg text-neutral-content [&>*]:py-2 [&>*]:font-bold">
-                  <th>#</th>
-                  <th>Movie</th>
-                  <th>Showtime</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>{cartTicketOrders.map(TicketRow)}</tbody>
-            </table>
-          </section>
-
-          <section className="mx-auto w-full max-w-sm rounded-b-lg border-8 border-t-0 bg-neutral px-2 pb-5 pt-5 text-neutral-content">
-            {isLoading ? (
-              <div className="loading-xl loading loading-spinner mx-auto block"></div>
-            ) : errors.badShowtimeIds.length === 0 ? (
-              <>
-                <h3 className="mt-8 text-2xl font-bold">
-                  &quot;Purchase&quot; Tickets
-                </h3>
-
-                <div className="divider mb-0 mt-0 w-full"></div>
-                {/* Displays the toals for each type of showing */}
-                <section>
-                  <h4 className="mb-2 flex justify-between px-4 text-xl font-semibold">
-                    <span>Total -</span>
-                    <span>
-                      {cartTicketOrders.map((order) => (
-                        <>
-                          <i className="font-thin capitalize italic">
-                            {order.number}{" "}
-                            {order.showtimeType.split(/(?=[A-Z])/).join(" ")}-{" "}
-                            {order.ticketPrice} $ ea.
-                          </i>
-                          <br />
-                        </>
-                      ))}
-                    </span>
-                    <span>
-                      {`${cartTicketOrders.reduce(
-                        (acc, order) => acc + order.number * order.ticketPrice,
-                        0
-                      )}$`}
-                    </span>
-                  </h4>
-
-                  <form onSubmit={handleSubmit} className="join ml-1.5 mt-4">
-                    <input
-                      type="text"
-                      name="name"
-                      className="input join-item"
-                      placeholder="Enter a name here..."
-                      onChange={handleChange}
-                      maxLength={24}
-                    />
-                    <button type="submit" className="btn-outline join-item btn">
-                      Place Order
-                    </button>
-                  </form>
-
-                  {errors.name && (
-                    <p className="pl-4 text-sm text-error">
-                      Please enter a valid name.
-                    </p>
-                  )}
-                </section>
-              </>
-            ) : (
-              <>
-                <p>
-                  The number of available seats changed while your order was
-                  processing. All other orders were successful.
-                </p>
-                <p>
-                  Click the error to go back to the showtime or remove the order
-                  from your cart.
-                </p>
-                <p>
-                  If you leave this page all erroneous orders will be cleared.
-                </p>
-              </>
-            )}
-          </section>
-        </>
-      )}
-    </RegularLayout>
+      </RegularLayout>
+    </>
   );
 }
