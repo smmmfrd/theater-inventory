@@ -72,10 +72,10 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
           for faster, use below to filter by the movie.
         </p>
 
-        <h3 className="-mb-4 mt-8 text-2xl">Filter by movie</h3>
+        <h3 className="-mb-3 mt-8 text-2xl underline">Filter by movie</h3>
         <form className="collapse-plus collapse mt-4 bg-base-300">
           <input type="checkbox" />
-          <h4 className="collapse-title truncate font-mono text-lg">
+          <h4 className="collapse-title truncate font-mono text-lg text-neutral-content">
             {selectedMovie.id > 0
               ? `(${selectedMovie.title})`
               : "Pick a movie..."}
@@ -85,7 +85,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               <span className="label-text">All</span>
               <input
                 type="radio"
-                name="movie"
+                name="all"
                 className="radio"
                 value={0}
                 checked={selectedMovie.id === 0}
@@ -99,7 +99,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 </span>
                 <input
                   type="radio"
-                  name="movie"
+                  name={title}
                   className="radio"
                   value={movieId}
                   checked={selectedMovie.id === movieId}
@@ -162,14 +162,14 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
 export default OrdersPage;
 
-type ShowtimeDataTypes = {
+type ShowtimeDataProps = {
   data: {
     orders: TicketOrder[];
   };
   refetch: () => void;
 };
 
-const ShowtimeData = ({ data, refetch }: ShowtimeDataTypes) => {
+const ShowtimeData = ({ data, refetch }: ShowtimeDataProps) => {
   const [localData, setLocalData] = useState(data);
 
   const { mutate: localMutate } = api.ticketOrders.deleteOrder.useMutation({
