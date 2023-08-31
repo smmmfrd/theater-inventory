@@ -120,7 +120,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             return movie.showtimes.map((showtime) => (
               <section
                 key={showtime.showtimeId}
-                className="collapse-arrow collapse h-min w-max border-2"
+                className="collapse-arrow collapse h-min w-max border-2 text-neutral-content"
               >
                 <input
                   type="checkbox"
@@ -136,7 +136,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
                 <h3
                   className={`collapse-title ${
-                    showtime.showtimeId === queryKey && "border-b-4"
+                    showtime.showtimeId === queryKey && "border-b-2"
                   }`}
                 >
                   {movie.title} - {showtime.time}
@@ -145,7 +145,9 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 {showtime.showtimeId === queryKey && (
                   <div className="collapse-content">
                     {isLoading && (
-                      <div className="loading loading-spinner loading-xs mx-auto"></div>
+                      <div className="w-full pt-4 text-center">
+                        <div className="loading loading-dots loading-xs"></div>
+                      </div>
                     )}
                     {data?.orders !== undefined && (
                       <ShowtimeData data={data} refetch={refetch} />
@@ -189,7 +191,7 @@ const ShowtimeData = ({ data, refetch }: ShowtimeDataProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 px-0.5 py-1">
+    <div className="flex flex-col gap-3 px-0.5 pt-3">
       {localData.orders.length > 0 ? (
         localData.orders.map((order) => (
           <div
