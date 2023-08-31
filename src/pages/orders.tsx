@@ -133,13 +133,17 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                   }
                   checked={showtime.showtimeId === queryKey}
                 />
-
+                {/* Showtime Title & Time */}
                 <h3
                   className={`collapse-title ${
                     showtime.showtimeId === queryKey && "border-b-2"
-                  }`}
+                  } w-64`}
                 >
-                  {movie.title} - {showtime.time}
+                  {/* Truncate Movie Title */}
+                  {movie.title.length > 12
+                    ? `${movie.title.slice(0, 12)}...`
+                    : movie.title}{" "}
+                  - {showtime.time}
                 </h3>
 
                 {showtime.showtimeId === queryKey && (
