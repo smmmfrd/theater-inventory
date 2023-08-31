@@ -115,7 +115,7 @@ export default function CartPage() {
           onChange={(e: React.FormEvent<HTMLInputElement>) =>
             updateOrder(ticketOrder.showtimeId, parseInt(e.currentTarget.value))
           }
-          className="input-primary input w-16 rounded-l-sm border-l-0"
+          className="input-primary input w-16 rounded-l-sm border-l-0 px-2"
           min={1}
           max={ticketOrder.availableSeats}
         />
