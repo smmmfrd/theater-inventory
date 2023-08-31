@@ -95,6 +95,10 @@ export default function CartPage() {
     };
   }, [errors, router, clearOrders]);
 
+  const errorId = (showtimeId: number): boolean =>
+    errors.badShowtimeIds.length > 0 &&
+    errors.badShowtimeIds.some((id) => id === showtimeId);
+
   const TicketRow = (ticketOrder: CartTicketOrder, index: number) => (
     <tr
       className={`text-xl [&>*]:py-2.5 ${
@@ -130,31 +134,11 @@ export default function CartPage() {
       </td>
       <td className="relative">
         <button
-          className="btn-outline btn-xs btn-circle btn absolute left-0 top-[22px] border-2"
+          className="btn-outline btn-xs btn-circle btn absolute left-0 top-[22px] overflow-hidden border-2"
           title="Delete Order"
           onClick={() => deleteOrder(ticketOrder.showtimeId)}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="3"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </td>
-      {errors.badShowtimeIds.length > 0 && (
-        <td className="">
-          {errors.badShowtimeIds.find(
-            (id) => id === ticketOrder.showtimeId
-          ) && (
+          {errorId(ticketOrder.showtimeId) ? (
             <Link
               className="btn-error btn-square btn-xs flex items-center justify-center rounded-lg text-base-100"
               title="Go back to this showtime"
@@ -162,9 +146,24 @@ export default function CartPage() {
             >
               !
             </Link>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           )}
-        </td>
-      )}
+        </button>
+      </td>
     </tr>
   );
 
@@ -195,6 +194,7 @@ export default function CartPage() {
       </header>
       {cartTicketOrders.length > 0 && (
         <>
+          {/* TABLE */}
           <section className="-mb-5 w-96 border-l-8 border-r-8 bg-neutral pt-5 text-neutral-content">
             <table className="table max-w-2xl text-right font-mono">
               <thead>
@@ -203,7 +203,6 @@ export default function CartPage() {
                   <th>Movie</th>
                   <th>Showtime</th>
                   <th></th>
-                  {errors.badShowtimeIds.length > 0 && <th></th>}
                 </tr>
               </thead>
               <tbody>{cartTicketOrders.map(TicketRow)}</tbody>
