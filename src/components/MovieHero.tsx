@@ -34,12 +34,12 @@ export default function MovieHero({
       </header>
 
       <section className="mx-auto w-full max-w-5xl md:flex md:items-stretch">
-        <div className="mb-4 mt-10 md:w-96 md:flex-none">
+        <article className="mb-4 mt-10 md:w-96 md:flex-none">
           <h2 className="mb-2 px-8 text-3xl font-bold">
             {altTitle.length > 0 ? altTitle : `${movie.title} at Fake Theater`}
           </h2>
           <p className="px-8">{movie.description}</p>
-        </div>
+        </article>
         {children}
       </section>
     </>

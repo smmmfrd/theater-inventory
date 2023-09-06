@@ -23,20 +23,6 @@ interface ShowtimeStaticPathParams extends ParsedUrlQuery {
   showtimeId: string;
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { showtimes } = await caller.showtimes.getAllShowtimeAndMovieIds();
-  const paths = showtimes.map((showtime) => ({
-    params: {
-      showtimeId: `${showtime.showtimeId}`,
-      movieId: `${showtime.movieId}`,
-    },
-  }));
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
 type SafeShowtime = {
   time: string;
   maxSeats: number;
@@ -51,6 +37,20 @@ type ShowtimePageProps = {
   safeShowtime: SafeShowtime;
   movie: Movie;
   showtimeType: string;
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const { showtimes } = await caller.showtimes.getAllShowtimeAndMovieIds();
+  const paths = showtimes.map((showtime) => ({
+    params: {
+      showtimeId: `${showtime.showtimeId}`,
+      movieId: `${showtime.movieId}`,
+    },
+  }));
+  return {
+    paths,
+    fallback: false,
+  };
 };
 
 export const getStaticProps: GetStaticProps<ShowtimePageProps> = async (
@@ -244,39 +244,49 @@ function ShowtimePageForm({
   };
 
   return (
-    <div className="mx-auto flex flex-col items-center md:justify-evenly">
-      {/* PRICING INFO */}
-      <p className="mb-6 mt-2 text-center text-lg md:m-0">
-        <span
-          className={`mr-4 rounded-xl px-3 py-4 text-2xl capitalize ${showtimeTypeToStyle()}`}
-        >
-          {showtimeType.split(/(?=[A-Z])/).join(" ")}
-        </span>
-        <span className="font-thin italic">( {ticketPrice}$ each )</span>
+    <section className="mx-auto flex max-w-xs flex-col items-center md:justify-evenly">
+      {/* HERO & TICKET AMOUNT */}
+      <h3 className="-mb-1 text-center text-2xl text-neutral-content md:m-0">
+        <span className="font-bold underline">Order Your Tickets!</span>
+      </h3>
+      <p className="mb-6 text-neutral-content">
+        Only {availableSeats} Seats Left!
       </p>
 
-      {/* HERO & TICKET AMOUNT */}
-      <h3 className="mb-2 text-center text-lg md:m-0">
-        <span className="font-bold underline">Order Tickets</span> - Only{" "}
-        {availableSeats} Seats Left!
-      </h3>
+      <div className="w-full">
+        {/* PRICING INFO */}
+        <p className="w-full text-center text-2xl md:m-0">
+          <h4
+            className={`rounded-t-xl px-4 py-3 capitalize ${showtimeTypeToStyle()}`}
+          >
+            {showtimeType.split(/(?=[A-Z])/).join(" ")}
 
-      {/* FORM */}
-      <form onSubmit={handleSubmit} className="join">
-        <input
-          type="number"
-          min="1"
-          max={availableSeats}
-          className="input-bordered input join-item w-28 text-xl"
-          name="tickets"
-          value={formData.tickets}
-          onChange={handleChange}
-        />
-        <button className="btn-outline join-item btn text-base" type="submit">
-          Add to Cart
-        </button>
-      </form>
-    </div>
+            <span className="ml-4 font-thin italic">
+              ( {ticketPrice}$ each )
+            </span>
+          </h4>
+        </p>
+
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="join w-full">
+          <input
+            type="number"
+            min="1"
+            max={availableSeats}
+            className="input-bordered input join-item flex-grow rounded-t-none border-t-0 border-neutral-content text-xl text-neutral-content"
+            name="tickets"
+            value={formData.tickets}
+            onChange={handleChange}
+          />
+          <button
+            className="btn-outline join-item btn flex-grow rounded-t-none border-t-0 text-base text-neutral-content"
+            type="submit"
+          >
+            Add to Cart
+          </button>
+        </form>
+      </div>
+    </section>
   );
 }
 
