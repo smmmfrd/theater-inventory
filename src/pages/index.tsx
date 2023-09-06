@@ -49,7 +49,8 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         </h2>
       </header>
 
-      <main className="bg-base grid min-h-screen sm:grid-cols-[repeat(auto-fit,minmax(512px,1fr))]">
+      <main className="bg-base mx-auto flex min-h-screen max-w-6xl flex-col items-center">
+        {/* <main className="bg-base grid min-h-screen sm:grid-cols-[repeat(auto-fit,minmax(512px,1fr))]"> */}
         {movies.map((movie) => (
           <MovieCard
             key={movie.movieId}
