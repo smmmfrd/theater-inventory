@@ -108,14 +108,14 @@ export default function CartPage() {
       }`}
       key={`${ticketOrder.showtimeId}${ticketOrder.number}`}
     >
-      <td className="px-0">
+      <td className="overflow-hidden px-0">
         <input
           type="number"
           value={ticketOrder.number}
           onChange={(e: React.FormEvent<HTMLInputElement>) =>
             updateOrder(ticketOrder.showtimeId, parseInt(e.currentTarget.value))
           }
-          className="input-primary input w-16 rounded-l-sm border-l-0 px-2"
+          className="input -ml-1 w-20 rounded-l-none border-l-0 pr-4 text-right text-2xl"
           min={1}
           max={ticketOrder.availableSeats}
         />
@@ -175,9 +175,9 @@ export default function CartPage() {
       </Head>
       <RegularLayout>
         <header
-          className={`-mb-5 w-96  border-8 ${
+          className={`-mb-5 mt-16 w-full max-w-lg border-8 ${
             cartTicketOrders.length > 0
-              ? " rounded-t-lg border-b-0"
+              ? "rounded-t-lg border-b-0"
               : "rounded-lg"
           }  bg-neutral px-8 text-neutral-content`}
         >
@@ -200,8 +200,8 @@ export default function CartPage() {
         {cartTicketOrders.length > 0 && (
           <>
             {/* TABLE */}
-            <section className="-mb-5 w-96 border-l-8 border-r-8 bg-neutral pt-5 text-neutral-content">
-              <table className="table max-w-2xl text-right font-mono">
+            <section className="-mb-5 w-full max-w-lg border-l-8 border-r-8 bg-neutral pt-5 text-neutral-content">
+              <table className="table text-right font-mono">
                 <thead>
                   <tr className="border-b-2 border-t-2 border-neutral-content bg-base-300 text-lg text-neutral-content [&>*]:py-2 [&>*]:font-bold">
                     <th>#</th>
@@ -214,12 +214,12 @@ export default function CartPage() {
               </table>
             </section>
 
-            <section className="mx-auto w-full max-w-sm rounded-b-lg border-8 border-t-0 bg-neutral px-2 pb-5 pt-5 text-neutral-content">
+            <section className="mx-auto w-full max-w-lg rounded-b-lg border-8 border-t-0 bg-neutral px-2 pb-5 pt-5 text-neutral-content">
               {isLoading ? (
                 <div className="loading-xl loading loading-spinner mx-auto block"></div>
               ) : errors.badShowtimeIds.length === 0 ? (
                 <>
-                  <h3 className="mt-8 text-2xl font-bold">
+                  <h3 className="mt-4 text-2xl font-bold">
                     &quot;Purchase&quot; Tickets
                   </h3>
 
@@ -240,16 +240,21 @@ export default function CartPage() {
                           </>
                         ))}
                       </span>
-                      <span>
+                      <span className="">
                         {`${cartTicketOrders.reduce(
                           (acc, order) =>
                             acc + order.number * order.ticketPrice,
                           0
-                        )}$`}
+                        )} $`}
                       </span>
                     </h4>
 
-                    <form onSubmit={handleSubmit} className="join ml-1.5 mt-4">
+                    <div className="divider mb-0 mt-0 w-full"></div>
+
+                    <form
+                      onSubmit={handleSubmit}
+                      className="join mt-4 w-full justify-center"
+                    >
                       <input
                         type="text"
                         name="name"
