@@ -71,15 +71,12 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </Head>
       <RegularLayout>
         <header className="max-w-md px-8 sm:mx-auto">
-          <h2 className="mt-4 text-4xl font-bold">Ticket Orders</h2>
-          <p>
-            View and Delete any orders here. To find the showtime you are
-            looking for faster, use below to filter by the movie.
-          </p>
+          <h2 className="mt-12 text-4xl font-bold">Ticket Orders</h2>
+          <p>View and delete any orders here.</p>
 
           <h3 className="-mb-3 mt-8 text-2xl underline">Filter by movie</h3>
           <form className="collapse-plus collapse mt-4 bg-base-300">
-            <input type="checkbox" />
+            <input type="checkbox" name="arrow" />
             <h4 className="collapse-title truncate font-mono text-lg text-neutral-content">
               {selectedMovie.id > 0
                 ? `(${selectedMovie.title})`
@@ -125,10 +122,11 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
               return movie.showtimes.map((showtime) => (
                 <section
                   key={showtime.showtimeId}
-                  className="collapse-arrow collapse h-min w-max border-2 text-neutral-content"
+                  className="collapse-arrow collapse h-min w-max rounded-lg border-2 text-neutral-content duration-100"
                 >
                   <input
                     type="checkbox"
+                    name="arrow"
                     onChange={() =>
                       setQueryKey(
                         showtime.showtimeId === queryKey
@@ -142,7 +140,7 @@ const OrdersPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                   <h3
                     className={`collapse-title ${
                       showtime.showtimeId === queryKey && "border-b-2"
-                    } w-64`}
+                    } h-[60px] w-64`}
                   >
                     {/* Truncate Movie Title */}
                     {movie.title.length > 12
@@ -201,7 +199,7 @@ const ShowtimeData = ({ data, refetch }: ShowtimeDataProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-3 px-0.5 pt-3">
+    <div className="flex flex-col items-start gap-3 px-0.5 pt-3">
       {localData.orders.length > 0 ? (
         localData.orders.map((order) => (
           <div
