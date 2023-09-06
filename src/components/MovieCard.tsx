@@ -16,21 +16,23 @@ export default function MovieCard({
   showtimeCount,
 }: MovieCardProps) {
   return (
-    <section className="relative m-8 flex flex-col gap-8 rounded bg-neutral p-8 text-base-content md:flex-row lg:flex-col">
-      <header className="top-16 mx-auto h-min max-w-[208px] flex-none md:sticky lg:relative lg:top-0">
+    <section className="relative m-8 flex flex-col gap-8 rounded bg-neutral p-8 text-base-content sm:flex-row">
+      <header className="top-16 mx-auto max-w-xs basis-1/3 sm:max-w-lg">
         <Link href={`movies/${movieId}`}>
           <Image
             className="mx-auto mb-1"
             src={posterImage}
-            width={208}
-            height={288}
+            height={960}
+            width={640}
             alt={`Poster for ${title}`}
           />
-          <h3 className="text-2xl font-semibold">{title}</h3>
+          <h3 className="text-3xl font-semibold text-neutral-content">
+            {title}
+          </h3>
         </Link>
       </header>
 
-      <div className="flex flex-grow flex-col justify-between gap-4">
+      <div className="flex basis-2/3 flex-col justify-between gap-4">
         <ShowtimeCard movieId={movieId} showtimeCount={showtimeCount} />
 
         <footer className="text-center">
