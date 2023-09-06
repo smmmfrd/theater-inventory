@@ -122,13 +122,18 @@ export default function CartPage() {
         />
       </td>
       <td>
-        <Link className="link" href={`/movies/${ticketOrder.movieId}`}>
+        <Link
+          className="link"
+          title="Go to this movie's page"
+          href={`/movies/${ticketOrder.movieId}`}
+        >
           {ticketOrder.movieTitle}
         </Link>
       </td>
       <td>
         <Link
           className="link"
+          title="Go to this showtime's page"
           href={`/movies/${ticketOrder.movieId}/${ticketOrder.showtimeId}`}
         >
           {ticketOrder.showtime}
