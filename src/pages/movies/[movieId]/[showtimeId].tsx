@@ -167,7 +167,7 @@ const ShowtimePage: NextPage<
 
         <Link
           href={`/movies/${movie.movieId}`}
-          className="btn-primary btn mx-auto mb-4 mt-12 md:mt-4"
+          className="btn-accent btn mx-auto mt-24 md:mt-4"
         >
           See other showtimes
         </Link>
@@ -244,7 +244,7 @@ function ShowtimePageForm({
   };
 
   return (
-    <section className="mx-auto flex max-w-xs flex-col items-center md:justify-evenly">
+    <section className="mx-auto flex max-w-xs flex-col items-center md:justify-center">
       {/* HERO & TICKET AMOUNT */}
       <h3 className="-mb-1 text-center text-2xl text-neutral-content md:m-0">
         <span className="font-bold underline">Order Your Tickets!</span>
@@ -279,7 +279,7 @@ function ShowtimePageForm({
             onChange={handleChange}
           />
           <button
-            className="btn-outline join-item btn flex-grow rounded-t-none border-t-0 text-base text-neutral-content"
+            className="btn-success join-item btn flex-grow rounded-t-none border-t-0 text-base"
             type="submit"
           >
             Add to Cart
