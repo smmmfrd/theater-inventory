@@ -117,6 +117,7 @@ export default function CartPage() {
           }
           className="input -ml-1 w-20 rounded-l-none border-l-0 pr-4 text-right text-2xl"
           min={1}
+          onKeyDown={(e) => e.preventDefault()}
           max={ticketOrder.availableSeats}
         />
       </td>
