@@ -17,4 +17,8 @@ All film images, descriptions, etc. are from [The Movie Database.](https://devel
 Vercel's cron job features handles two key hooks for this project:
 
 - Every night randomly generated orders are created.
-- Every sunday the site refreshes all the data and redeploys,
+- Every sunday the site refreshes all the data and redeploys.
+
+## Future Plans
+
+The Cron Jobs need to be moved to Github Actions, where I can have there be daily showings, to simulate a real movie theater.
